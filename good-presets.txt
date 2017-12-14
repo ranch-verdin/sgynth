@@ -1,0 +1,72 @@
+60 plucky thing
+64 cello
+10002 spacey pad
+10006 liftoff
+10013 organ
+15000 finger bass
+15003 harpsichord
+15006 rhodes-ish
+15036 tuned drum
+15023 lately bass
+15023 plunk bass
+758 wobble bass
+759 frog bass
+1608 octave bass
+1683 woosh bass
+1687 octave hammond
+1690 gushing strings
+1691 zen pad
+1732 talkbox
+1739 reverse guitar
+1741 beep/groan
+1742 clanging panpipe
+1746 slapback guitar
+1753 crazy cries
+1769 dramatic FM stabs
+1808 rich FM bass
+1814 pizziccato spacebass
+1817 acoustic piano
+1819 rasputin twang
+1822 french horn
+1823 cheez-ee sax
+1840 warm rhodes
+1842 shred guitar
+1843 autowah bass
+1845 metallic synth lead
+1856 wubby bass
+1860 steelpan/trumpet
+1862 deep bells
+1864 crystal palace
+1870 cats
+1920 mario bleep
+1951 talkbox bass
+1974 swell brass
+1986 swell strings
+1989 percussive rhodes
+1990 tuned pipes
+1991 fuzz rhodes
+1999 detuned dr who lead
+2003 record stop
+2012 echoey theramin
+2015 harpsichord
+2018 harpsichord
+2021 pipe organ
+2025 soft hammond
+2026 spooky church organ
+2040 vibrato trumpet
+2043 haunted house
+2063 clown bass
+2080 ethereal plucked pad
+2085 jester's piccolo
+2090 shimmering tings
+2095 slide-up
+2101 cheeky piccolo
+2148 cats in space
+2151 drowning birds
+2152 UFO flyby
+2153 UFO swoop
+2154 UFO takeoff
+2155 fire phasors
+2171 chaos
+2219 squelch
+2227 metal whack
