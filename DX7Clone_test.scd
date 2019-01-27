@@ -239,20 +239,21 @@ SynthDef(\SOStom,
 		{"zoinks, simultaneous noteons, bailing!".postln;},
 		{~noteOnLock = true;
 			if(chan == 0,
-				{~drumNoteOn.value(vel, note);},
-				{~otherNoteOn.value(vel, note, chan);});
+				{~drumNoteOn.value(vel, note);}// ,
+				// {~otherNoteOn.value(vel, note, chan);}
+			);
 			~noteOnLock = false;
 		});
 };
 
 ~myDX7NoteOff = {arg vel, note, chan;
-	if(~noteOnLock,
-		{"zoinks, simultaneous noteoffs, bailing!".postln;},
-		{~noteOnLock = true;
-		if(chan != 0,
-			{~otherNoteOff.value(vel, note, chan);});
-			~noteOnLock = false;
-		});
+	// if(~noteOnLock,
+	// 	{"zoinks, simultaneous noteoffs, bailing!".postln;},
+	// 	{~noteOnLock = true;
+	// 	if(chan != 0,
+	// 		{~otherNoteOff.value(vel, note, chan);});
+	// 		~noteOnLock = false;
+	// 	});
 };
 
 ~setupChans = Routine {
