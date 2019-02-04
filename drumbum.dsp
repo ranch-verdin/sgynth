@@ -22,4 +22,4 @@ popFilterDrum(freq,q,gate) = hgroup("noise",basic_env(gate))*(0.5 + 0.5*no.noise
 					hslider("limit_neg", 0.1, 0.001, 1.0, 0.001),
 					hslider("knee_neg", 2, 1, 10.0, 0.1)));
 
-process = button("gate"):popFilterDrum(freq, q);
+process = vgroup("bd", button("gate"):popFilterDrum(freq, q) : !,_,!);
