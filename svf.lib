@@ -9,7 +9,7 @@ import("sat.lib");
 calc_damp(freq,res) = min(2.0*(1.0 - pow(res, 0.25)), min(2.0, 2.0/freq - freq*0.5));
 calc_freq(fc) = 2.0*sin(PI*min(0.25, fc/SR));
 
-svf_skel(freq,damp,clip,band_,low_,high_,in) = band,low,high with {
+svf_skel(freq,damp,clip,low_,band_,high_,in) = low,band,high with {
     notch = clip(in - damp * band_);
     low = clip(low_ + freq * band_);
     high = clip(notch - low);
