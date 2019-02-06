@@ -34,8 +34,8 @@ length = vslider("length",6.4,0.1,10,0.1) * 0.001;
 decay_oh = vslider("decay_oh",1401.9,2,2000,0.1) * 0.001;
 decay_hh = vslider("decay_hh",84.7,2,2000,0.1) * 0.001;
 
-oh =button("oh") : trigger(length);
-hh =button("hh") : trigger(length);
+oh = button("oh") : trigger(length);
+hh = button("hh") : trigger(length);
 process = strike(trig_param_select(hh,decay_hh,
 				   oh,decay_oh),
 	  	 trig_either(hh,oh));
