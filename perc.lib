@@ -1,0 +1,10 @@
+import("stdfaust.lib");
+
+trigger(length) = ba.impulsify : ba.countdown(length * SR) > 0;
+
+trig_param_select(trig_short,decay_short,trig_long,decay_long) =
+  trig_short * decay_short + trig_long * decay_long :
+  ba.latch(trig_short + trig_long > 0);
+
+trig_either(trig_short,trig_long) = (trig_short+trig_long > 0);
+
