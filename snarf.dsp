@@ -32,7 +32,7 @@ clip_func =
 clip_func1 = hgroup("clip1", clip_func);
 clip_func2 = hgroup("clip2", clip_func);
 
-shake = thwack <: svf(freq1, q1, clip_func1) , svf(freq2, q2, clip_func2) :> _;
+shake = thwack <: svf_bpf(freq1, q1, clip_func1),svf_bpf(freq2, q2, clip_func2) :> _;
 
 rattle = contour * no.noise : fi.lowpass(2,sizzlefreq) : *(sizzle);
 
