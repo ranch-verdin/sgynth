@@ -41,6 +41,8 @@ void testaddParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param,
     }
   }
   testAddAbsParam(ui, destString, param, init, min, max, increment);
+  printf("adding param: %s\n", destString);
+  lo_server_thread_add_method(ui->st, destString, "f", param_handler, param);
 }
 
 void testaddButton(struct UIGlue *uiInterface, char *buttonName, FAUSTFLOAT *param) {

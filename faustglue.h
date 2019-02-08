@@ -1,5 +1,8 @@
 #ifndef FAUST_GLUE_H
 #define FAUST_GLUE_H
+#include "lo/lo.h"
+int param_handler(const char *path, const char *types, lo_arg ** argv,
+		  int argc, void *data, void *user_data);
 
 #define FAUSTFLOAT float
 
@@ -46,6 +49,7 @@ typedef struct UIGlue {
   int paramNameStackIdx;
 
   struct faustParam_t faustParam[PARAM_N_MAX];
+  lo_server_thread st;
   int faustParamIdx;
 } UIGlue;
 void addDuplicateParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param);

@@ -91,7 +91,6 @@ void load_so (char *so_file) {
   (*instanceInitmydsp)(mydsp, 44100);
 
 
-  initUIGlue(&ui);
   void (*buildUserInterfacemydsp)(void*, UIGlue*);
   buildUserInterfacemydsp = dlsym(handle, "buildUserInterfacemydsp");
   (*buildUserInterfacemydsp)(mydsp, &ui);
@@ -100,16 +99,18 @@ void load_so (char *so_file) {
 
 
 int main (int argc, char *argv[]) {
-
+  initUIGlue(&ui);
+  ui.st = lo_server_thread_new("7770", error);
   if(argc >=2) {
     load_so(argv[1]);
   }
   //fire up osc server for module
   printf("bang osc port 7770 @ /param with a float\n");
-  lo_server_thread st = lo_server_thread_new("7770", error);
-  lo_server_thread_add_method(st, NULL, NULL, generic_handler, NULL);
-  lo_server_thread_add_method(st, "/param", "f", foo_handler, NULL);
-  lo_server_thread_start(st);
+
+  /* lo_server_thread_add_method(st, NULL, NULL, generic_handler, NULL); */
+  lo_server_thread_add_method(ui.st, "/param", "f", foo_handler, NULL);
+  /* lo_server_thread_add_method(st, NULL, "f", param_handler, NULL); */
+  lo_server_thread_start(ui.st);
 
   const char **ports;
   const char *client_name = "aleph_sim";
@@ -117,16 +118,16 @@ int main (int argc, char *argv[]) {
   jack_options_t options = JackNullOption;
   jack_status_t status;
 
-  if (argc == 2)
-    latency = atoi(argv[1]);
+  /* if (argc == 2) */
+  /*   latency = atoi(argv[1]); */
 
-  delay_line = malloc( latency * sizeof(jack_default_audio_sample_t));
-  if (delay_line == NULL) {
-    fprintf (stderr, "no memory");
-    exit(1);
-  }
+  /* delay_line = malloc( latency * sizeof(jack_default_audio_sample_t)); */
+  /* if (delay_line == NULL) { */
+  /*   fprintf (stderr, "no memory"); */
+  /*   exit(1); */
+  /* } */
 
-  memset (delay_line, 0, latency * sizeof(jack_default_audio_sample_t));
+  /* memset (delay_line, 0, latency * sizeof(jack_default_audio_sample_t)); */
 
   /* open a client connection to the JACK server */
 
@@ -268,6 +269,18 @@ int main (int argc, char *argv[]) {
 }
 /* catch any incoming messages and display them. returning 1 means that the
  * message has not been fully handled and the server should try other methods */
+int param_handler(const char *path, const char *types, lo_arg ** argv,
+		  int argc, void *data, void *user_data) {
+  printf("handling param: %s\n", path);
+  /* float *param = testFindParam(&ui, (char *)path); */
+  /* if (param) { */
+  *((float*)user_data) = argv[0]->f;
+    /* *param = argv[0]->f; */
+  /* } */
+
+  return 1;
+}
+
 int generic_handler(const char *path, const char *types, lo_arg ** argv,
 		    int argc, void *data, void *user_data)
 {
