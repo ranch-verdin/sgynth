@@ -75,8 +75,8 @@ void error(int num, const char *m, const char *path);
 
 UIGlue ui;
 FAUSTFLOAT *button;
-void load_so (void) {
-  void *handle = dlopen("./drumbum.so", RTLD_NOW);
+void load_so (char *so_file) {
+  void *handle = dlopen(so_file, RTLD_NOW);
   if (handle == NULL) {
     printf("blaaargh\n");
     fprintf(stderr, "%s\n", dlerror());
@@ -96,13 +96,14 @@ void load_so (void) {
   buildUserInterfacemydsp = dlsym(handle, "buildUserInterfacemydsp");
   (*buildUserInterfacemydsp)(mydsp, &ui);
 
-  button = testFindParam(&ui, "/bd/bd");
 }
 
 
 int main (int argc, char *argv[]) {
 
-  load_so();
+  if(argc >=2) {
+    load_so(argv[1]);
+  }
   //fire up osc server for module
   printf("bang osc port 7770 @ /param with a float\n");
   lo_server_thread st = lo_server_thread_new("7770", error);
@@ -182,7 +183,7 @@ int main (int argc, char *argv[]) {
       exit (1);
     }
   }
-  for (j=0; j < IN_PORTS; j++) {
+  for (j=0; j < OUT_PORTS; j++) {
     char foo[100];
     sprintf(foo, "output%d", j);
     output_ports[j] = jack_port_register (client, foo,
@@ -232,23 +233,28 @@ int main (int argc, char *argv[]) {
   /*   exit (1); */
   /* } */
 
-  /* if (jack_connect (client, jack_port_name (output_port), "jaaa:in_1")) { */
-  /*   fprintf (stderr, "cannot connect output ports\n"); */
-  /* } */
-  /* if (jack_connect (client, jack_port_name (output_port), "latent:input 0")) { */
-  /*   fprintf (stderr, "cannot connect output ports\n"); */
-  /* } */
+  if (jack_connect (client, jack_port_name (output_ports[0]), "system:playback_1")) {
+    fprintf (stderr, "cannot connect output ports\n");
+  }
+  if (jack_connect (client, jack_port_name (output_ports[0]), "system:playback_2")) {
+    fprintf (stderr, "cannot connect output ports\n");
+  }
 
   /* free (ports); */
 
   /* keep running until stopped by the user */
   while(1) {
-    sleep(1);
-    if (*button < 0.5) {
-      *button  = 1.0;
+    if (argc >= 3) {
+      button = testFindParam(&ui, argv[2]);
     }
-    else {
-      *button = 0.0;
+    usleep(100 * 1000);
+    if (button) {
+      if (*button < 0.5) {
+	*button  = 1.0;
+      }
+      else {
+	*button = 0.0;
+      }
     }
   }
 
