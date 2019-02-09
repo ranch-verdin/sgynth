@@ -17,7 +17,7 @@ typedef struct {
 
 struct faustParam_t {
   char name[PARAM_NAMESTRING_MAX];
-  FAUSTFLOAT *param;
+  volatile FAUSTFLOAT *param;
   FAUSTFLOAT init;
   FAUSTFLOAT min;
   FAUSTFLOAT max;
@@ -49,12 +49,16 @@ typedef struct UIGlue {
   int paramNameStackIdx;
 
   struct faustParam_t faustParam[PARAM_N_MAX];
-  lo_server_thread st;
   int faustParamIdx;
+
+  volatile float *triggers[PARAM_N_MAX];
+  int n_triggers;
+  lo_server_thread st;
+
 } UIGlue;
 void addDuplicateParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param);
 void testSetParam (UIGlue *ui, char *paramName, FAUSTFLOAT newValue);
-FAUSTFLOAT *testFindParam (UIGlue *ui, char *paramName);
+volatile FAUSTFLOAT *testFindParam (UIGlue *ui, char *paramName);
 void initUIGlue (UIGlue *ui);
 
 int load_params_from_file (UIGlue *ui, const char *paramFilename);

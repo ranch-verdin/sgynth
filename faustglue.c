@@ -48,6 +48,10 @@ void testaddParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param,
 
 void testaddButton(struct UIGlue *uiInterface, char *buttonName, FAUSTFLOAT *param) {
   testaddParam(uiInterface, buttonName, param, 0, 0, 1, 1);
+  uiInterface->triggers[uiInterface->n_triggers] =
+    uiInterface->faustParam[uiInterface->faustParamIdx - 1].param;// XX nasty hack to get percussive triggers working right (breaks actual notes when expressed as buttons)
+  // much better to mark percussive triggers with a :trig but this will do for now...
+  uiInterface->n_triggers++;
 }
 
 void addDuplicateParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param) {
@@ -66,7 +70,7 @@ void addDuplicateParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param) {
   warn("Couldn't find param: '%s' when trying to set param with that name\n", paramName);
 }
 
-FAUSTFLOAT *testFindParam (UIGlue *ui, char *paramName) {
+volatile FAUSTFLOAT *testFindParam (UIGlue *ui, char *paramName) {
   int i, nParams=0;
   for(i=0; i < ui->faustParamIdx; i++) {
     if(strcmp(ui->faustParam[i].name, paramName) == 0) {
@@ -124,6 +128,7 @@ void initUIGlue (UIGlue *ui) {
   ui->closeBox = testcloseBox;
   ui->paramNameStackIdx = 0;
   ui->faustParamIdx = 0;
+  ui->n_triggers = 0;
   ui->declare = testdeclare;
 }
 

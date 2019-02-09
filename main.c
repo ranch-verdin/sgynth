@@ -12,6 +12,7 @@
 #include "faustglue.h"
 
 jack_client_t *client;
+UIGlue ui;
 
 jack_default_audio_sample_t *delay_line;
 jack_nframes_t delay_index;
@@ -58,7 +59,9 @@ int process_block (jack_nframes_t nframes, void *arg) {
   /*     *(jack_out[j] + i) = fr32_to_float(out[j]); */
   /*   } */
   /* } */
-
+  for(i=0; i < ui.n_triggers; i++) {
+    *(ui.triggers[i]) = 0;
+  }
   return 0;
 }
 
@@ -77,8 +80,7 @@ int generic_handler(const char *path, const char *types, lo_arg ** argv,
 
 void error(int num, const char *m, const char *path);
 
-UIGlue ui;
-FAUSTFLOAT *button;
+volatile FAUSTFLOAT *button;
 void load_so (char *so_file) {
   void *handle = dlopen(so_file, RTLD_NOW);
   if (handle == NULL) {
@@ -109,7 +111,7 @@ int main (int argc, char *argv[]) {
   //fire up osc server for module
   printf("bang osc port 57120 @ /param with a float\n");
 
-  lo_server_thread_add_method(ui.st, NULL, NULL, generic_handler, NULL);
+  /* lo_server_thread_add_method(ui.st, NULL, NULL, generic_handler, NULL); */
   lo_server_thread_add_method(ui.st, "/param", "f", foo_handler, NULL);
   lo_server_thread_add_method(ui.st, "/report/commands", "", report_commands_handler, NULL);
   lo_server_thread_add_method(ui.st, "/engine/load/name", "s", report_commands_handler, NULL);
@@ -278,7 +280,7 @@ int main (int argc, char *argv[]) {
  * message has not been fully handled and the server should try other methods */
 int param_handler(const char *path, const char *types, lo_arg ** argv,
 		  int argc, void *data, void *user_data) {
-  printf("handling param: %s\n", path);
+  /* printf("handling param: %s\n", path); */
   /* float *param = testFindParam(&ui, (char *)path); */
   /* if (param) { */
   *((float*)user_data) = argv[0]->f;
