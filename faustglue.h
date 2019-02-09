@@ -60,6 +60,7 @@ void addDuplicateParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param);
 void testSetParam (UIGlue *ui, char *paramName, FAUSTFLOAT newValue);
 volatile FAUSTFLOAT *testFindParam (UIGlue *ui, char *paramName);
 void initUIGlue (UIGlue *ui);
+void resetUIGlue(UIGlue *ui);
 
 int load_params_from_file (UIGlue *ui, const char *paramFilename);
 int save_params_to_file (UIGlue *ui, const char *paramFilename);

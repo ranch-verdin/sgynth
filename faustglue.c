@@ -132,6 +132,11 @@ void initUIGlue (UIGlue *ui) {
   ui->declare = testdeclare;
 }
 
+void resetUIGlue(UIGlue *ui) {
+  ui->n_triggers = 0;
+  ui->faustParamIdx = 0;
+}
+
 int load_params_from_file (UIGlue *ui, const char *paramFilename) {
   FILE *paramFile;
   int nParams = 0;

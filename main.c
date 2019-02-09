@@ -32,11 +32,19 @@ jack_port_t *output_ports[OUT_PORTS];
  */
 void (*computemydsp)(void* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) = NULL;
 void *mydsp = NULL;
+void (*fb_computemydsp)(void* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) = NULL;
+void *fb_mydsp = NULL;
+int fb_flag = 0;
 int process_block (jack_nframes_t nframes, void *arg) {
 
   jack_default_audio_sample_t* jack_in[IN_PORTS];
   jack_default_audio_sample_t* jack_out[OUT_PORTS];
   int i, j;
+  if(fb_flag) {
+    mydsp = fb_mydsp;
+    computemydsp = fb_computemydsp;
+    fb_flag = 0;
+  }
   //First get an input buffer for each jack input
   for (j=0; j < IN_PORTS; j++) {
     jack_out[j] = jack_port_get_buffer (output_ports[j], nframes);
@@ -73,6 +81,8 @@ int foo_handler(const char *path, const char *types, lo_arg ** argv,
 		int argc, void *data, void *user_data);
 int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
 		int argc, void *data, void *user_data);
+int engine_load_handler(const char *path, const char *types, lo_arg ** argv,
+		int argc, void *data, void *user_data);
 int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
 		int argc, void *data, void *user_data);
 int generic_handler(const char *path, const char *types, lo_arg ** argv,
@@ -88,33 +98,34 @@ void load_so (char *so_file) {
     fprintf(stderr, "%s\n", dlerror());
     exit(EXIT_FAILURE);
   }
-  computemydsp = dlsym(handle, "computemydsp");
   void * (*newmydsp)(void);
   newmydsp = dlsym(handle, "newmydsp");
-  mydsp = (*newmydsp)();
+  fb_mydsp = (*newmydsp)();
   void (*instanceInitmydsp)(void*, int);
   instanceInitmydsp = dlsym(handle, "instanceInitmydsp");
-  (*instanceInitmydsp)(mydsp, 44100);
+  (*instanceInitmydsp)(fb_mydsp, 44100);
 
   void (*buildUserInterfacemydsp)(void*, UIGlue*);
   buildUserInterfacemydsp = dlsym(handle, "buildUserInterfacemydsp");
-  (*buildUserInterfacemydsp)(mydsp, &ui);
-
+  resetUIGlue(&ui);
+  (*buildUserInterfacemydsp)(fb_mydsp, &ui);
+  fb_computemydsp = dlsym(handle, "computemydsp");
+  fb_flag = 1;
 }
 
 int main (int argc, char *argv[]) {
   initUIGlue(&ui);
   ui.st = lo_server_thread_new("57120", error);
-  if(argc >=2) {
-    load_so(argv[1]);
-  }
+  /* if(argc >=2) { */
+  /*   load_so(argv[1]); */
+  /* } */
   //fire up osc server for module
   printf("bang osc port 57120 @ /param with a float\n");
 
   /* lo_server_thread_add_method(ui.st, NULL, NULL, generic_handler, NULL); */
   lo_server_thread_add_method(ui.st, "/param", "f", foo_handler, NULL);
   lo_server_thread_add_method(ui.st, "/report/commands", "", report_commands_handler, NULL);
-  lo_server_thread_add_method(ui.st, "/engine/load/name", "s", report_commands_handler, NULL);
+  lo_server_thread_add_method(ui.st, "/engine/load/name", "s", engine_load_handler, NULL);
   lo_server_thread_add_method(ui.st, "/report/engines", "", report_engines_handler, NULL);
   /* lo_server_thread_add_method(st, NULL, "f", param_handler, NULL); */
   lo_server_thread_start(ui.st);
@@ -305,6 +316,12 @@ int generic_handler(const char *path, const char *types, lo_arg ** argv,
     fflush(stdout);
 
     return 1;
+}
+
+int engine_load_handler(const char *path, const char *types, lo_arg ** argv,
+		   int argc, void *data, void *user_data) {
+  load_so(&argv[0]->s);
+  report_commands_handler(path, types, argv, argc, data, user_data);
 }
 
 int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
