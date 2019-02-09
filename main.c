@@ -68,6 +68,10 @@ void jack_shutdown (void *arg) {
 }
 int foo_handler(const char *path, const char *types, lo_arg ** argv,
 		int argc, void *data, void *user_data);
+int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
+		int argc, void *data, void *user_data);
+int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
+		int argc, void *data, void *user_data);
 int generic_handler(const char *path, const char *types, lo_arg ** argv,
 		    int argc, void *data, void *user_data);
 
@@ -90,25 +94,26 @@ void load_so (char *so_file) {
   instanceInitmydsp = dlsym(handle, "instanceInitmydsp");
   (*instanceInitmydsp)(mydsp, 44100);
 
-
   void (*buildUserInterfacemydsp)(void*, UIGlue*);
   buildUserInterfacemydsp = dlsym(handle, "buildUserInterfacemydsp");
   (*buildUserInterfacemydsp)(mydsp, &ui);
 
 }
 
-
 int main (int argc, char *argv[]) {
   initUIGlue(&ui);
-  ui.st = lo_server_thread_new("7770", error);
+  ui.st = lo_server_thread_new("57120", error);
   if(argc >=2) {
     load_so(argv[1]);
   }
   //fire up osc server for module
-  printf("bang osc port 7770 @ /param with a float\n");
+  printf("bang osc port 57120 @ /param with a float\n");
 
-  /* lo_server_thread_add_method(st, NULL, NULL, generic_handler, NULL); */
+  lo_server_thread_add_method(ui.st, NULL, NULL, generic_handler, NULL);
   lo_server_thread_add_method(ui.st, "/param", "f", foo_handler, NULL);
+  lo_server_thread_add_method(ui.st, "/report/commands", "", report_commands_handler, NULL);
+  lo_server_thread_add_method(ui.st, "/engine/load/name", "s", report_commands_handler, NULL);
+  lo_server_thread_add_method(ui.st, "/report/engines", "", report_engines_handler, NULL);
   /* lo_server_thread_add_method(st, NULL, "f", param_handler, NULL); */
   lo_server_thread_start(ui.st);
 
@@ -243,8 +248,8 @@ int main (int argc, char *argv[]) {
 
   /* free (ports); */
 
-  lo_address t = lo_address_new(NULL, "8888");
-  lo_send(t, "/crone/ready");
+  lo_address matron_addr = lo_address_new(NULL, "8888");
+  lo_send(matron_addr, "/crone/ready","");
   /* keep running until stopped by the user */
   while(1) {
     if (argc >= 3) {
@@ -300,6 +305,31 @@ int generic_handler(const char *path, const char *types, lo_arg ** argv,
     return 1;
 }
 
+int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
+		   int argc, void *data, void *user_data) {
+  printf("reporting commands...\n");
+  lo_address t = lo_address_new(NULL, "8888");
+  lo_send(t, "/report/commands/start","i", ui.faustParamIdx);
+  int i;
+  for(i=0; i < ui.faustParamIdx; i++) {
+    char *without_cmd = ui.faustParam[i].name + 9;// XXX nasty hack to unfuck matron's asymmetric addr-mangling
+    printf("cmd: %s...\n", without_cmd);
+    lo_send(t, "/report/commands/entry","iss", i, without_cmd, "f");
+  }
+  lo_send(t, "/report/commands/end","");
+
+  lo_send(t, "/report/polls/start","i", 0);
+  lo_send(t, "/report/polls/end","");
+
+}
+int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
+		   int argc, void *data, void *user_data) {
+  printf("reporting engines...\n");
+  lo_address t = lo_address_new(NULL, "8888");
+  lo_send(t, "/report/engines/start","i", 1);
+  lo_send(t, "/report/engines/entry","iss", 0, "drumbum", "f");
+  lo_send(t, "/report/engines/end","i", 1);
+}
 int foo_handler(const char *path, const char *types, lo_arg ** argv,
 		int argc, void *data, void *user_data) {
   printf("received param %f\n", argv[0]->f);

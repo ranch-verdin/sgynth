@@ -29,10 +29,10 @@ void testaddParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param,
   int i;
   char *destString = ui->faustParam[ui->faustParamIdx].name;
 
-  strcpy(destString, "/");
+  strcpy(destString, "/command/");
   for(i=0; i < ui->paramNameStackIdx; i++) {
     strcat(destString, ui->paramNameStack[i]);
-    strcat(destString, "/");
+    strcat(destString, "_");
   }
   strcat(destString, paramName);
   for(i=0; i < strlen(destString); i++) {
@@ -40,9 +40,10 @@ void testaddParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param,
       destString[i] = '_';
     }
   }
-  testAddAbsParam(ui, destString, param, init, min, max, increment);
   printf("adding param: %s\n", destString);
+  testAddAbsParam(ui, destString, param, init, min, max, increment);
   lo_server_thread_add_method(ui->st, destString, "f", param_handler, param);
+
 }
 
 void testaddButton(struct UIGlue *uiInterface, char *buttonName, FAUSTFLOAT *param) {
