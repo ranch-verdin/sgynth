@@ -243,6 +243,8 @@ int main (int argc, char *argv[]) {
 
   /* free (ports); */
 
+  lo_address t = lo_address_new(NULL, "8888");
+  lo_send(t, "/crone/ready");
   /* keep running until stopped by the user */
   while(1) {
     if (argc >= 3) {
