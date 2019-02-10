@@ -33,7 +33,7 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
 		     0.5, 0.0, 1.0, 0.01);
 
   // add a simple float trigger command to this engine, resting value 0.0
-  ui->engineAddFloatCommand(ui, "prang",
+  ui->engineAddParamCommand(ui, "prang",
 			    &e->prang,
 			    0.0, 0.0, 1.0);
   // FIXME - expressing commands via floating point number is

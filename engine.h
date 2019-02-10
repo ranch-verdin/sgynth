@@ -12,7 +12,7 @@
 
 struct engineParam_t {
   char name[ENGINE_MAX_NAMESTRING];
-  volatile ENGINEFLOAT *param;
+  volatile ENGINEFLOAT *param; // OSC server will set this to update the value seen by the DSP
   ENGINEFLOAT init; // engineHost will initialise *param to this value
 
   ENGINEFLOAT min; // engineHost will clip params within the range
@@ -22,7 +22,7 @@ struct engineParam_t {
 
 struct engineCommand_t {
   char name[ENGINE_MAX_NAMESTRING];
-  volatile ENGINEFLOAT *command;
+  volatile ENGINEFLOAT *param; // OSC server will set this to update the value seen by the DSP (when params are being tunneled through a command)
   ENGINEFLOAT rest; // engineHost will reset *command to this value after each block
 
   ENGINEFLOAT min; // engineHost will clip commands within the range
@@ -42,7 +42,7 @@ struct engineUI_t{
   void (*engineAddParam)(struct engineUI_t *uiInterface, char *paramName,
 			 ENGINEFLOAT *param,
 			 ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max, ENGINEFLOAT increment);
-  void (*engineAddFloatCommand)(struct engineUI_t *uiInterface, char *cmdName,
+  void (*engineAddParamCommand)(struct engineUI_t *uiInterface, char *cmdName,
 				ENGINEFLOAT *data,
 				ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max);
   void (*engineAddCommand)(struct engineUI_t *uiInterface, char *cmdName,
