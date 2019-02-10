@@ -1,7 +1,11 @@
-# cp faustglue.h $1.c
-# faust -lang c -vec -vs 256 $1.dsp | sed -e s/"min("/"fmin("/g -e s/"max("/"fmax("/g>> $1.c
-# gcc -O3 -c -fPIC $1.c -o $1.o
-# gcc $1.o -shared -o $1.so
+faustfile=drumbum
+
+
+gcc -Wall -c -fPIC -lmath engine_faustExample.c -o engine_faustExample.o
+cp faustglue.h $faustfile.c
+faust -lang c -vec -vs 256 $faustfile.dsp | sed -e s/"min("/"fmin("/g -e s/"max("/"fmax("/g>> $faustfile.c
+gcc -O3 -c -fPIC $faustfile.c -o $faustfile.o
+gcc engine_faustExample.o $faustfile.o -shared -o $faustfile.so
 
 gcc -Wall -c -fPIC -lmath engine_example.c -o engine_example.o
 gcc -shared engine_example.o -o engine_example.so
