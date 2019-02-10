@@ -64,6 +64,7 @@ struct engineUI_t{
   int numSignalInputs;
   int numSignalOutputs;
   lo_server_thread st;
+  lo_address matron_addr;
 };
 
 void *engine_new(struct engineUI_t *ui, int samplingFreq); // needs to call faust's newmydsp

@@ -56,7 +56,7 @@ void engine_next(void *engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** ou
     e->env *= 0.9999;
     float noise = (float)rand()/(float)(RAND_MAX/2.0);
     noise -= 1.0;
-    outputs[0][i] = noise * e->env;
+    outputs[0][i] = noise * e->env * e->gain;
     e->vu *= 0.999;
     e->vu += 0.001 * fabs(outputs[0][i]);
   }
