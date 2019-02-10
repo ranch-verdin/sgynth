@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+#include <error.h>
 
 #include <jack/jack.h>
 #include <math.h>
@@ -12,15 +13,12 @@
 #include "engine.h"
 #include "engineglue.h"
 
-jack_client_t *client;
-struct engineUI_t ui;
-jack_default_audio_sample_t *delay_line;
-jack_nframes_t delay_index;
-jack_nframes_t latency = 1024;
+static jack_client_t *client;
+static struct engineUI_t ui;
 #define IN_PORTS 2
 #define OUT_PORTS 2
-jack_port_t *input_ports[IN_PORTS];
-jack_port_t *output_ports[OUT_PORTS];
+static jack_port_t *input_ports[IN_PORTS];
+static jack_port_t *output_ports[OUT_PORTS];
 
 /**
  * The process callback for this JACK application is called in a
@@ -30,11 +28,11 @@ jack_port_t *output_ports[OUT_PORTS];
  * port to its output port. It will exit when stopped by
  * the user (e.g. using Ctrl-C on a unix-ish operating system)
  */
-void (*myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
+volatile void (*myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
 void *myengine = NULL;
-void (*fb_myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
+volatile void (*fb_myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
 void *fb_myengine = NULL;
-int fb_flag = 0;
+volatile int fb_flag = 0;
 int process_block (jack_nframes_t nframes, void *arg) {
 
   jack_default_audio_sample_t* jack_in[IN_PORTS];
@@ -56,17 +54,6 @@ int process_block (jack_nframes_t nframes, void *arg) {
   if (myengine_next && myengine) {
     (*myengine_next)(myengine, nframes, jack_in, jack_out);
   }
-  //Then run module_process_frame, priming ins from jack_in, copying
-  //outs back to jack_out
-  /* for (i=0; i < nframes; i++) { */
-  /*   for (j=0; j < IN_PORTS; j++) { */
-  /*     in[j] = float_to_fr32(*(jack_in[j] + i)); */
-  /*   } */
-
-  /*   for (j=0; j < OUT_PORTS; j++) { */
-  /*     *(jack_out[j] + i) = fr32_to_float(out[j]); */
-  /*   } */
-  /* } */
   return 0;
 }
 
@@ -74,29 +61,26 @@ void jack_shutdown (void *arg) {
   fprintf(stderr, "JACK shut down, exiting ...\n");
   exit (1);
 }
-int foo_handler(const char *path, const char *types, lo_arg ** argv,
-		int argc, void *data, void *user_data);
-int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
-			    int argc, void *data, void *user_data);
-int report_params_handler(const char *path, const char *types, lo_arg ** argv,
-			  int argc, void *data, void *user_data);
-int engine_load_handler(const char *path, const char *types, lo_arg ** argv,
-			int argc, void *data, void *user_data);
-int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
-			   int argc, void *data, void *user_data);
-int generic_handler(const char *path, const char *types, lo_arg ** argv,
-		    int argc, void *data, void *user_data);
-int ready_handler(const char *path, const char *types, lo_arg ** argv,
-		  int argc, void *data, void *user_data);
 
-void lo_server_error(int num, const char *m, const char *path);
-
+void *handle = NULL;
 void load_so (char *so_file) {
-  void *handle = dlopen(so_file, RTLD_NOW);
+  if(handle) {
+    fb_myengine = NULL;
+    fb_myengine_next = NULL;
+    fb_flag = 1;
+    int i = 0;
+    while(fb_flag) {
+      usleep(1000);
+      if (i++ > 2000) {
+	error(1,0,"realtime thread failed to detach old DSP code, can't recover!");
+      }
+    }
+    dlclose(handle);
+  }
+  handle = dlopen(so_file, RTLD_NOW);
   if (handle == NULL) {
-    printf("blaaargh\n");
-    fprintf(stderr, "%s\n", dlerror());
-    exit(EXIT_FAILURE);
+    fprintf(stdout, "blaaargh, can't open %s because %s\n", so_file, dlerror());
+    return;
   }
   void * (*myengine_new)(void*, int);
   myengine_new = dlsym(handle, "engine_new");
@@ -113,23 +97,11 @@ void load_so (char *so_file) {
 int main (int argc, char *argv[]) {
   ui.matron_addr = lo_address_new(NULL, "8888");
   default_engineInitUI(&ui);
-  ui.st = lo_server_thread_new("57120", lo_server_error);
   /* if(argc >=2) { */
   /*   load_so(argv[1]); */
   /* } */
   //fire up osc server for module
   printf("bang osc port 57120 @ /param with a float\n");
-
-  lo_server_thread_add_method(ui.st, NULL, NULL, generic_handler, NULL);
-  lo_server_thread_add_method(ui.st, "/param", "f", foo_handler, NULL);
-  lo_server_thread_add_method(ui.st, "/report/commands", "", report_commands_handler, NULL);
-  lo_server_thread_add_method(ui.st, "/report/params", "", report_params_handler, NULL);
-  lo_server_thread_add_method(ui.st, "/engine/load/name", "s", engine_load_handler, NULL);
-  lo_server_thread_add_method(ui.st, "/report/engines", "", report_engines_handler, NULL);
-  lo_server_thread_add_method(ui.st, "/ready", "", ready_handler, NULL);
-
-  /* lo_server_thread_add_method(st, NULL, "f", param_handler, NULL); */
-  lo_server_thread_start(ui.st);
 
   const char **ports;
   const char *client_name = "aleph_sim";
@@ -167,21 +139,7 @@ int main (int argc, char *argv[]) {
     fprintf (stderr, "unique name `%s' assigned\n", client_name);
   }
 
-  /* tell the JACK server to call `process()' whenever
-     there is work to be done.
-  */
-
   jack_set_process_callback (client, process_block, 0);
-
-  /* tell the JACK server to call `latency()' whenever
-     the latency needs to be recalculated.
-  */
-
-  /* tell the JACK server to call `jack_shutdown()' if
-     it ever shuts down, either entirely, or if it
-     just decides to stop calling us.
-  */
-
   jack_on_shutdown (client, jack_shutdown, 0);
 
   /* display the current sample rate.
@@ -263,23 +221,20 @@ int main (int argc, char *argv[]) {
   /* free (ports); */
 
   lo_send(ui.matron_addr, "/crone/ready","");
-  sleep(-1);
-  /* keep running until stopped by the user */
-  /* while(1) { */
-  /*   if (argc >= 3) { */
-  /*     button = testFindParam(&ui, argv[2]); */
-  /*   } */
-  /*   usleep(100 * 1000); */
-  /*   if (button) { */
-  /*     if (*button < 0.5) { */
-  /*	*button  = 1.0; */
-  /*     } */
-  /*     else { */
-  /*	*button = 0.0; */
-  /*     } */
-  /*   } */
-  /* } */
-
+  while(1) {
+    if(ui.st) {
+      lo_server_recv(ui.st);
+    }
+    if (engine_reload_flag) {
+      default_engineResetUI(&ui);
+      load_so(engine_reload_string);
+      report_commands_handler("", "f", NULL, 0, NULL, &ui);
+      report_params_handler("", "f", NULL, 0, NULL, &ui);
+      engine_reload_flag = 0;
+      // FIXME - build report_polls_handler and uncomment the line below
+      /* report_polls_handler("", "f", NULL, 0, NULL, NULL); */
+    }
+  }
   /* this is never reached but if the program
      had some other way to exit besides being killed,
      they would be important to call.
@@ -287,101 +242,4 @@ int main (int argc, char *argv[]) {
 
   jack_client_close (client);
   exit (0);
-}
-/* catch any incoming messages and display them. returning 1 means that the
- * message has not been fully handled and the server should try other methods */
-int param_handler(const char *path, const char *types, lo_arg ** argv,
-		  int argc, void *data, void *user_data) {
-  /* printf("handling param: %s\n", path); */
-  /* float *param = testFindParam(&ui, (char *)path); */
-  /* if (param) { */
-  *((float*)user_data) = argv[0]->f;
-  /* *param = argv[0]->f; */
-  /* } */
-
-  return 1;
-}
-
-int generic_handler(const char *path, const char *types, lo_arg ** argv,
-		    int argc, void *data, void *user_data)
-{
-  int i;
-
-  printf("path: <%s>\n", path);
-  for (i = 0; i < argc; i++) {
-    printf("arg %d '%c' ", i, types[i]);
-    lo_arg_pp((lo_type)types[i], argv[i]);
-    printf("\n");
-  }
-  printf("\n");
-  fflush(stdout);
-
-  return 1;
-}
-
-int engine_load_handler(const char *path, const char *types, lo_arg ** argv,
-			int argc, void *data, void *user_data) {
-  load_so(&argv[0]->s);
-  report_commands_handler(path, types, argv, argc, data, user_data);
-  report_params_handler(path, types, argv, argc, data, user_data);
-}
-
-int ready_handler(const char *path, const char *types, lo_arg ** argv,
-		  int argc, void *data, void *user_data) {
-  lo_send(ui.matron_addr, "/crone/ready","");
-}
-
-int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
-			    int argc, void *data, void *user_data) {
-  printf("reporting commands...\n");
-  lo_address t = lo_address_new(NULL, "8888");
-  lo_send(t, "/report/commands/start","i", ui.numParams);
-  int i;
-  for(i=0; i < ui.numParams; i++) {
-    char *without_cmd = ui.commands[i].name;
-    printf("cmd: %s...\n", without_cmd);
-    lo_send(t, "/report/commands/entry","iss", i, without_cmd, "f");
-  }
-  lo_send(t, "/report/commands/end","");
-
-  lo_send(t, "/report/polls/start","i", 0);
-  lo_send(t, "/report/polls/end","");
-
-}
-int report_params_handler(const char *path, const char *types, lo_arg ** argv,
-			  int argc, void *data, void *user_data) {
-  printf("reporting params...\n");
-  lo_address t = lo_address_new(NULL, "8888");
-  lo_send(t, "/report/params/start","i", ui.numCommands);
-  int i;
-  for(i=0; i < ui.numParams; i++) {
-    char *without_cmd =  ui.params[i].name;
-    printf("cmd: %s...\n", without_cmd);
-    lo_send(t, "/report/params/entry","iss", i, without_cmd, "f");
-  }
-  lo_send(t, "/report/params/end","");
-
-  lo_send(t, "/report/polls/start","i", 0);
-  lo_send(t, "/report/polls/end","");
-
-}
-int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
-			   int argc, void *data, void *user_data) {
-  printf("reporting engines...\n");
-  lo_address t = ui.matron_addr;
-  lo_send(t, "/report/engines/start","i", 1);
-  lo_send(t, "/report/engines/entry","iss", 0, "drumbum", "f");
-  lo_send(t, "/report/engines/end","i", 1);
-}
-int foo_handler(const char *path, const char *types, lo_arg ** argv,
-		int argc, void *data, void *user_data) {
-  printf("received param %f\n", argv[0]->f);
-  return 0;
-}
-
-
-void lo_server_error(int num, const char *msg, const char *path)
-{
-  printf("liblo server error %d in path %s: %s\n", num, path, msg);
-  fflush(stdout);
 }

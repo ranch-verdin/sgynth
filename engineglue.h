@@ -17,3 +17,22 @@ void default_engineAddCommand(struct engineUI_t *uiInterface, char *cmdName,
 
 void default_engineInitUI (struct engineUI_t *ui);
 void default_engineResetUI(struct engineUI_t *ui);
+
+int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
+			    int argc, void *data, void *user_data);
+int report_params_handler(const char *path, const char *types, lo_arg ** argv,
+			  int argc, void *data, void *user_data);
+int engine_load_handler(const char *path, const char *types, lo_arg ** argv,
+			int argc, void *data, void *user_data);
+int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
+			   int argc, void *data, void *user_data);
+int generic_handler(const char *path, const char *types, lo_arg ** argv,
+		    int argc, void *data, void *user_data);
+int ready_handler(const char *path, const char *types, lo_arg ** argv,
+		  int argc, void *data, void *user_data);
+
+void lo_server_error(int num, const char *m, const char *path);
+void recrank_lo_server(struct engineUI_t *ui);
+
+volatile int engine_reload_flag;
+char engine_reload_string[ENGINE_MAX_NAMESTRING];

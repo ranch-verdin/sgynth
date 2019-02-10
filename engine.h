@@ -63,7 +63,7 @@ struct engineUI_t{
   int sampleRate;
   int numSignalInputs;
   int numSignalOutputs;
-  lo_server_thread st;
+  lo_server st;
   lo_address matron_addr;
 };
 

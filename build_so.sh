@@ -7,4 +7,4 @@ gcc -Wall -c -fPIC -lmath engine_example.c -o engine_example.o
 gcc -shared engine_example.o -o engine_example.so
 
 gcc -g main.c faustglue.c -llo -ljack -ldl
-gcc -g engine_main.c engineglue.c -llo -ljack -ldl
+gcc -Wall -g engine_main.c engineglue.c -llo -ljack -ldl

@@ -14,6 +14,7 @@ struct example {
 void *engine_new(struct engineUI_t *ui, int samplingFreq) {
   struct example *engine = malloc(sizeof(struct example));
   engine->ui = ui;
+  engine->env = 0.5;
   ui->sampleRate = samplingFreq;
   ui->numSignalInputs = 0;
   ui->numSignalOutputs = 1;
