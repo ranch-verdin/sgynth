@@ -43,6 +43,7 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
   ui->engineAddParamCommand(ui, "prang",
 			    &e->prang,
 			    0.0, 0.0, 1.0);
+  // prong does the same as prang
   ui->engineAddCommand(ui, "prong", "f",
 		       prong_callback, &e->prang);
 
