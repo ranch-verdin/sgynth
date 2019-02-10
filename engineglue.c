@@ -156,12 +156,14 @@ int engine_load_handler(const char *path, const char *types, lo_arg ** argv,
 			int argc, void *data, void *user_data) {
   strncpy(engine_reload_string, &argv[0]->s, ENGINE_MAX_NAMESTRING - 1);
   engine_reload_flag = 1;
+  return 0;
 }
 
 int ready_handler(const char *path, const char *types, lo_arg ** argv,
 		  int argc, void *data, void *user_data) {
   struct engineUI_t *ui = user_data;
   lo_send(ui->matron_addr, "/crone/ready","");
+  return 0;
 }
 
 int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
@@ -179,7 +181,7 @@ int report_commands_handler(const char *path, const char *types, lo_arg ** argv,
 
   lo_send(ui->matron_addr, "/report/polls/start","i", 0);
   lo_send(ui->matron_addr, "/report/polls/end","");
-
+  return 0;
 }
 int report_params_handler(const char *path, const char *types, lo_arg ** argv,
 			  int argc, void *data, void *user_data) {
@@ -196,7 +198,7 @@ int report_params_handler(const char *path, const char *types, lo_arg ** argv,
 
   lo_send(ui->matron_addr, "/report/polls/start","i", 0);
   lo_send(ui->matron_addr, "/report/polls/end","");
-
+  return 0;
 }
 int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
 			   int argc, void *data, void *userdata) {
@@ -206,6 +208,7 @@ int report_engines_handler(const char *path, const char *types, lo_arg ** argv,
   lo_send(ui->matron_addr, "/report/engines/entry","iss", 0, "./engine_example.so", "f");
   // FIXME actually ls the directory and report all available .so to matron
   lo_send(ui->matron_addr, "/report/engines/end","i", 1);
+  return 0;
 }
 
 void lo_server_error(int num, const char *msg, const char *path)

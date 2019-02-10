@@ -37,7 +37,7 @@ int process_block (jack_nframes_t nframes, void *arg) {
 
   jack_default_audio_sample_t* jack_in[IN_PORTS];
   jack_default_audio_sample_t* jack_out[OUT_PORTS];
-  int i, j;
+  int j;
   if(fb_flag) {
     myengine = fb_myengine;
     myengine_next = fb_myengine_next;
@@ -97,28 +97,14 @@ void load_so (char *so_file) {
 int main (int argc, char *argv[]) {
   ui.matron_addr = lo_address_new(NULL, "8888");
   default_engineInitUI(&ui);
-  /* if(argc >=2) { */
-  /*   load_so(argv[1]); */
-  /* } */
   //fire up osc server for module
   printf("bang osc port 57120 @ /param with a float\n");
 
-  const char **ports;
   const char *client_name = "aleph_sim";
   const char *server_name = NULL;
   jack_options_t options = JackNullOption;
   jack_status_t status;
 
-  /* if (argc == 2) */
-  /*   latency = atoi(argv[1]); */
-
-  /* delay_line = malloc( latency * sizeof(jack_default_audio_sample_t)); */
-  /* if (delay_line == NULL) { */
-  /*   fprintf (stderr, "no memory"); */
-  /*   exit(1); */
-  /* } */
-
-  /* memset (delay_line, 0, latency * sizeof(jack_default_audio_sample_t)); */
 
   /* open a client connection to the JACK server */
 
@@ -179,15 +165,6 @@ int main (int argc, char *argv[]) {
     exit (1);
   }
 
-
-  /* Connect the ports.  You can't do this before the client is
-   * activated, because we can't make connections to clients
-   * that aren't running.  Note the confusing (but necessary)
-   * orientation of the driver backend ports: playback ports are
-   * "input" to the backend, and capture ports are "output" from
-   * it.
-   */
-
   /* ports = jack_get_ports (client, NULL, NULL, */
   /*			  JackPortIsPhysical|JackPortIsOutput); */
   /* if (ports == NULL) { */
@@ -195,12 +172,12 @@ int main (int argc, char *argv[]) {
   /*   exit (1); */
   /* } */
 
-  /* if (jack_connect (client, "jaaa:out_1", jack_port_name (input_port))) { */
-  /*   fprintf (stderr, "cannot connect input ports\n"); */
-  /* } */
-  /* if (jack_connect (client, "latent:input 1", jack_port_name (input_port))) { */
-  /*   fprintf (stderr, "cannot connect input ports\n"); */
-  /* } */
+  if (jack_connect (client, "system:capture_1", jack_port_name (input_ports[0]))) {
+    fprintf (stderr, "cannot connect input ports\n");
+  }
+  if (jack_connect (client, "system:capture_2", jack_port_name (input_ports[0]))) {
+    fprintf (stderr, "cannot connect input ports\n");
+  }
 
   /* free (ports); */
 
@@ -217,8 +194,6 @@ int main (int argc, char *argv[]) {
   if (jack_connect (client, jack_port_name (output_ports[0]), "system:playback_2")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
-
-  /* free (ports); */
 
   lo_send(ui.matron_addr, "/crone/ready","");
   while(1) {
