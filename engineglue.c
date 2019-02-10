@@ -32,8 +32,8 @@ void default_engineAddFloatCommand(struct engineUI_t *ui, char *commandName,
   ui->numCommands++;
 }
 void default_engineAddPoll(struct engineUI_t *ui, char *pollName,
-		      ENGINEFLOAT *poll,
-		      ENGINEFLOAT min, ENGINEFLOAT max) {
+			   ENGINEFLOAT *poll,
+			   ENGINEFLOAT min, ENGINEFLOAT max) {
   strncpy(ui->commands[ui->numPolls].name, pollName, ENGINE_MAX_NAMESTRING - 1);
   ui->polls[ui->numPolls].poll= poll;
   ui->polls[ui->numPolls].min = min;
@@ -64,8 +64,8 @@ void default_engineResetUI(struct engineUI_t *ui) {
 }
 
 /* void engineParam_init(struct engineParam_t *e, */
-/* 		      char *name, */
-/* 		      ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max) { */
+/*		      char *name, */
+/*		      ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max) { */
 /*   strncpy(e->name, name, ENGINE_MAX_NAMESTRING -1); */
 /*   e->init = init; */
 /*   e->min = min; */
@@ -73,8 +73,8 @@ void default_engineResetUI(struct engineUI_t *ui) {
 /* } */
 
 /* void engineCommand_init(struct engineParam_t *e, */
-/* 			char *name, */
-/* 			ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max){ */
+/*			char *name, */
+/*			ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max){ */
 /*   strncpy(e->name, name, ENGINE_MAX_NAMESTRING -1); */
 /*   e->rest = rest; */
 /*   e->min = min; */
@@ -82,8 +82,8 @@ void default_engineResetUI(struct engineUI_t *ui) {
 /* } */
 
 /* void enginePoll_init(struct engineParam_t *e, */
-/* 		     char *name, */
-/* 		     ENGINEFLOAT min, ENGINEFLOAT max){ */
+/*		     char *name, */
+/*		     ENGINEFLOAT min, ENGINEFLOAT max){ */
 /*   strncpy(e->name, name, ENGINE_MAX_NAMESTRING -1); */
 /*   e->min = min; */
 /*   e->max = max; */
