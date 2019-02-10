@@ -34,4 +34,8 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
 void engine_next(void *engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) {
   struct example *e = (struct example *) engine;
   computemydsp(e->faustDsp, count, inputs, outputs);
+  int i;
+  for(i=0; i < e->ui.n_triggers; i++) {
+    *(e->ui.triggers[i]) = 0;
+  }
 }
