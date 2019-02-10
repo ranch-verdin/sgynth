@@ -31,13 +31,14 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
 		     &e->gain,
 		     0.5, 0.0, 1.0, 0.01);
 
-  // FIXME - expressing commands as floating point number only is is a
-  // nasty quirk of faust - FloatTrig should be expressed using a
-  // function call
   // add a simple float trigger command to this engine, resting value 0.0
   ui->engineAddFloatCommand(ui, "prang",
 			    &e->prang,
 			    0.0, 0.0, 1.0);
+  // FIXME - expressing commands via floating point number is
+  // braindamage inherited from faust - FloatCommand should be
+  // expressed as a function call, then add the
+  // command-via-floating-point hack as a shim to faust layer only
 
   // add a simple float poll which monitors rms
   ui->engineAddPoll(ui, "noise",
@@ -52,7 +53,7 @@ void engine_next(void *engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** ou
     if(e->prang != 0) {
       e->env = e->prang;
     }
-    e->env *= 0.99999;
+    e->env *= 0.9999;
     float noise = (float)rand()/(float)(RAND_MAX/2.0);
     noise -= 1.0;
     outputs[0][i] = noise * e->env;

@@ -6,6 +6,15 @@
 #include <err.h>
 #include <errno.h>
 #include <error.h>
+#include "lo/lo.h"
+
+static int default_engineParamHandler(const char *path, const char *types, lo_arg ** argv,
+				      int argc, void *data, void *user_data) {
+  printf("handling param: %s,%f\n", path, argv[0]->f);
+  *((float*)user_data) = argv[0]->f;
+
+  return 1;
+}
 
 void default_engineAddParam(struct engineUI_t *ui, char *paramName, ENGINEFLOAT *param,
 			    ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max, ENGINEFLOAT increment) {
@@ -17,8 +26,21 @@ void default_engineAddParam(struct engineUI_t *ui, char *paramName, ENGINEFLOAT 
   ui->params[ui->numParams].increment = increment;
 
   *param = init;
+  char oscAddr[ENGINE_MAX_NAMESTRING] = "/param/";;
+  strncat(oscAddr, paramName, ENGINE_MAX_NAMESTRING - 1);
+  printf("adding osc method %s f\n", oscAddr);
+  lo_server_thread_add_method(ui->st, oscAddr, "f", default_engineParamHandler, param);
+
   ui->numParams++;
 }
+
+static int default_engineFloatCmdHandler(const char *path, const char *types, lo_arg ** argv,
+				      int argc, void *data, void *user_data) {
+  printf("handling command: %s,%f\n", path, argv[0]->f);
+  *((float*)user_data) = argv[0]->f;
+  return 1;
+}
+
 void default_engineAddFloatCommand(struct engineUI_t *ui, char *commandName,
 				   ENGINEFLOAT *command,
 				   ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max) {
@@ -29,6 +51,11 @@ void default_engineAddFloatCommand(struct engineUI_t *ui, char *commandName,
   ui->commands[ui->numCommands].max = max;
 
   *command = rest;
+  char oscAddr[ENGINE_MAX_NAMESTRING] = "/command/";;
+  strncat(oscAddr, commandName, ENGINE_MAX_NAMESTRING - 1);
+  printf("adding osc method %s f\n", oscAddr);
+  lo_server_thread_add_method(ui->st, oscAddr, "f", default_engineParamHandler, command);
+
   ui->numCommands++;
 }
 void default_engineAddPoll(struct engineUI_t *ui, char *pollName,

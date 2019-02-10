@@ -1,6 +1,7 @@
 #ifndef _ENGINE_H
 #define _ENGINE_H
 #include <jack/jack.h>
+#include "lo/lo.h"
 
 #define ENGINEFLOAT float
 #define ENGINE_MAX_NAMESTRING 256 // max chars in engine namestring
@@ -62,6 +63,7 @@ struct engineUI_t{
   int sampleRate;
   int numSignalInputs;
   int numSignalOutputs;
+  lo_server_thread st;
 };
 
 void *engine_new(struct engineUI_t *ui, int samplingFreq); // needs to call faust's newmydsp
