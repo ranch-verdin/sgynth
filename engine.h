@@ -22,11 +22,8 @@ struct engineParam_t {
 
 struct engineCommand_t {
   char name[ENGINE_MAX_NAMESTRING];
-  volatile ENGINEFLOAT *param; // OSC server will set this to update the value seen by the DSP (when params are being tunneled through a command)
-  ENGINEFLOAT rest; // engineHost will reset *command to this value after each block
-
-  ENGINEFLOAT min; // engineHost will clip commands within the range
-  ENGINEFLOAT max; // min->max
+  char fmt[ENGINE_MAX_NAMESTRING];
+  struct engineParam_t param; // need this in order to implement 'command params'
 };
 
 struct enginePoll_t {
@@ -43,10 +40,10 @@ struct engineUI_t{
 			 ENGINEFLOAT *param,
 			 ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max, ENGINEFLOAT increment);
   void (*engineAddParamCommand)(struct engineUI_t *uiInterface, char *cmdName,
-				ENGINEFLOAT *data,
+				ENGINEFLOAT *param,
 				ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max);
-  void (*engineAddCommand)(struct engineUI_t *uiInterface, char *cmdName,
-			   void *liblo_handler);
+  void (*engineAddCommand)(struct engineUI_t *ui, char *commandName, char *argFmt,
+			   void *liblo_handler, void *userdata);
   void (*engineAddPoll)(struct engineUI_t *uiInterface, char *pollName,
 			ENGINEFLOAT *param,
 			ENGINEFLOAT min, ENGINEFLOAT max);

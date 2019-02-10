@@ -12,7 +12,6 @@ static int default_engineParamHandler(const char *path, const char *types, lo_ar
 				      int argc, void *data, void *user_data) {
   printf("handling param: %s,%f\n", path, argv[0]->f);
   *((float*)user_data) = argv[0]->f;
-
   return 1;
 }
 
@@ -28,7 +27,7 @@ void default_engineAddParam(struct engineUI_t *ui, char *paramName, ENGINEFLOAT 
   *param = init;
   char oscAddr[ENGINE_MAX_NAMESTRING] = "/param/";;
   strncat(oscAddr, paramName, ENGINE_MAX_NAMESTRING - 1);
-  printf("adding osc method %s f\n", oscAddr);
+  printf("adding osc param method %s f\n", oscAddr);
   lo_server_add_method(ui->st, oscAddr, "f", default_engineParamHandler, param);
 
   ui->numParams++;
@@ -37,21 +36,33 @@ void default_engineAddParam(struct engineUI_t *ui, char *paramName, ENGINEFLOAT 
 // this is a command which has the behaviour of a param (i.e setting float *param)
 void default_engineAddParamCommand(struct engineUI_t *ui, char *commandName,
 				   ENGINEFLOAT *param,
-				   ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max) {
+				   ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max) {
   strncpy(ui->commands[ui->numCommands].name, commandName, ENGINE_MAX_NAMESTRING - 1);
-  ui->commands[ui->numCommands].param = param;
-  ui->commands[ui->numCommands].rest = rest;
-  ui->commands[ui->numCommands].min = min;
-  ui->commands[ui->numCommands].max = max;
+  ui->commands[ui->numCommands].param.param = param;// FIXME: yuk!
+  ui->commands[ui->numCommands].param.init = init;
+  ui->commands[ui->numCommands].param.min = min;
+  ui->commands[ui->numCommands].param.max = max;
 
-  *param = rest;
+  *param = init;
   char oscAddr[ENGINE_MAX_NAMESTRING] = "/command/";;
   strncat(oscAddr, commandName, ENGINE_MAX_NAMESTRING - 1);
-  printf("adding osc method %s f\n", oscAddr);
+  printf("adding osc command-param method %s f\n", oscAddr);
   lo_server_add_method(ui->st, oscAddr, "f", default_engineParamHandler, param);
 
   ui->numCommands++;
 }
+
+void default_engineAddCommand(struct engineUI_t *ui, char *commandName, char *argFmt,
+			      void *liblo_handler, void *userdata) {
+  strncpy(ui->commands[ui->numCommands].name, commandName, ENGINE_MAX_NAMESTRING - 1);
+  strncpy(ui->commands[ui->numCommands].fmt, argFmt, ENGINE_MAX_NAMESTRING - 1);
+  char oscAddr[ENGINE_MAX_NAMESTRING] = "/command/";;
+  strncat(oscAddr, commandName, ENGINE_MAX_NAMESTRING - 1);
+  printf("adding osc command method %s %s\n", oscAddr, argFmt);
+  lo_server_add_method(ui->st, oscAddr, argFmt, liblo_handler, userdata);
+  ui->numCommands++;
+}
+
 void default_engineAddPoll(struct engineUI_t *ui, char *pollName,
 			   ENGINEFLOAT *poll,
 			   ENGINEFLOAT min, ENGINEFLOAT max) {
@@ -61,11 +72,6 @@ void default_engineAddPoll(struct engineUI_t *ui, char *pollName,
   ui->polls[ui->numPolls].max = max;
   *poll = 0;
   ui->numPolls++;
-}
-
-void default_engineAddCommand(struct engineUI_t *ui, char *cmdName,
-			      void *liblo_handler) {
-  error(1, EAFNOSUPPORT,"engine add command not implemented yet for arbitrary liblo callback");
 }
 
 void default_engineInitUI (struct engineUI_t *ui) {

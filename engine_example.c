@@ -25,6 +25,13 @@ void engine_free(void *engine) {
   free(engine);
 }
 
+static int prong_callback(const char *path, const char *types, lo_arg ** argv,
+			  int argc, void *data, void *user_data) {
+  ENGINEFLOAT *prang = user_data;
+  *prang = argv[0]->f;
+  return 0;
+}
+
 void engine_buildUI(void *engine, struct engineUI_t *ui) {
   struct example *e = (struct example *) engine;
   // add a volume control to this engine, 0.0->1.0 in 0.01 increments (default 0.5)
@@ -36,10 +43,8 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
   ui->engineAddParamCommand(ui, "prang",
 			    &e->prang,
 			    0.0, 0.0, 1.0);
-  // FIXME - expressing commands via floating point number is
-  // braindamage inherited from faust - FloatCommand should be
-  // expressed as a function call, then add the
-  // command-via-floating-point hack as a shim to faust layer only
+  ui->engineAddCommand(ui, "prong", "f",
+		       prong_callback, &e->prang);
 
   // add a simple float poll which monitors rms
   ui->engineAddPoll(ui, "noise",
