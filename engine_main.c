@@ -115,7 +115,7 @@ void load_so (char *so_file) {
     fb_myengine_next = NULL;
     return;
   }
-  
+
   fb_myengine = (*myengine_new)(&ui, jack_get_sample_rate (client));
 
   default_engineResetUI(&ui);
