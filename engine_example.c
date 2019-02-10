@@ -27,8 +27,8 @@ void engine_free(void *engine) {
 
 static int prong_callback(const char *path, const char *types, lo_arg ** argv,
 			  int argc, void *data, void *user_data) {
-  ENGINEFLOAT *prang = user_data;
-  *prang = argv[0]->f;
+  ENGINEFLOAT *env = user_data;
+  *env = argv[0]->f;
   return 0;
 }
 
@@ -45,7 +45,7 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
 			    0.0, 0.0, 1.0);
   // prong does the same as prang
   ui->engineAddCommand(ui, "prong", "f",
-		       prong_callback, &e->prang);
+		       prong_callback, &e->env);
 
   // add a simple float poll which monitors rms
   ui->engineAddPoll(ui, "noise",
