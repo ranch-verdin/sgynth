@@ -66,7 +66,7 @@ void default_engineAddCommand(struct engineUI_t *ui, char *commandName, char *ar
 void default_engineAddPoll(struct engineUI_t *ui, char *pollName,
 			   ENGINEFLOAT *poll,
 			   ENGINEFLOAT min, ENGINEFLOAT max) {
-  strncpy(ui->commands[ui->numPolls].name, pollName, ENGINE_MAX_NAMESTRING - 1);
+  strncpy(ui->polls[ui->numPolls].name, pollName, ENGINE_MAX_NAMESTRING - 1);
   ui->polls[ui->numPolls].poll= poll;
   ui->polls[ui->numPolls].min = min;
   ui->polls[ui->numPolls].max = max;
