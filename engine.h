@@ -47,6 +47,7 @@ struct engineUI_t{
   void (*engineAddPoll)(struct engineUI_t *uiInterface, char *pollName,
 			ENGINEFLOAT *param,
 			ENGINEFLOAT min, ENGINEFLOAT max);
+  void (*engineResetUI)(struct engineUI_t *ui);
 
   struct engineParam_t params[ENGINE_MAX_PARAMS];
   int numParams;

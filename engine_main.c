@@ -29,6 +29,7 @@ static jack_port_t *output_ports[OUT_PORTS];
  * the user (e.g. using Ctrl-C on a unix-ish operating system)
  */
 volatile void (*myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
+volatile void (*myengine_free)(void* engine) = NULL;
 void *myengine = NULL;
 volatile void (*fb_myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
 void *fb_myengine = NULL;
@@ -65,6 +66,7 @@ void jack_shutdown (void *arg) {
 void *handle = NULL;
 void load_so (char *so_file) {
   if(handle) {
+    void *cache_myengine_pointer = myengine;
     fb_myengine = NULL;
     fb_myengine_next = NULL;
     fb_flag = 1;
@@ -75,6 +77,17 @@ void load_so (char *so_file) {
 	error(1,0,"realtime thread failed to detach old DSP code, can't recover!");
       }
     }
+    myengine_free = dlsym(handle, "engine_free");
+    if (myengine_free) {
+      if(cache_myengine_pointer) {
+	free(cache_myengine_pointer);
+      }
+    } else {
+      printf("warning: couldn't find engine_free... falling back to free without any extra cleanup");
+      if(cache_myengine_pointer) {
+	free(cache_myengine_pointer);
+      }
+    }
     dlclose(handle);
   }
   handle = dlopen(so_file, RTLD_NOW);
@@ -83,14 +96,30 @@ void load_so (char *so_file) {
     return;
   }
   void * (*myengine_new)(void*, int);
+  void (*myengine_buildUI)(void*, struct engineUI_t*);
   myengine_new = dlsym(handle, "engine_new");
+  myengine_buildUI = dlsym(handle, "engine_buildUI");
+  fb_myengine_next = dlsym(handle, "engine_next");
+  if (myengine_new == NULL) {
+    fprintf(stdout, "opened %s but function engine_new is missing\n", so_file);
+    fb_myengine_next = NULL;
+    return;
+  }
+  if (myengine_buildUI == NULL) {
+    fprintf(stdout, "opened %s but function engine_buildUI is missing\n", so_file);
+    fb_myengine_next = NULL;
+    return;
+  }
+  if (fb_myengine_next == NULL) {
+    fprintf(stdout, "opened %s but function engine_next is missing\n", so_file);
+    fb_myengine_next = NULL;
+    return;
+  }
+  
   fb_myengine = (*myengine_new)(&ui, jack_get_sample_rate (client));
 
-  void (*myengine_buildUI)(void*, struct engineUI_t*);
-  myengine_buildUI = dlsym(handle, "engine_buildUI");
   default_engineResetUI(&ui);
   (*myengine_buildUI)(fb_myengine, &ui);
-  fb_myengine_next = dlsym(handle, "engine_next");
   fb_flag = 1;
 }
 

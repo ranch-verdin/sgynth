@@ -79,6 +79,7 @@ void default_engineInitUI (struct engineUI_t *ui) {
   ui->engineAddParamCommand = default_engineAddParamCommand;
   ui->engineAddCommand = default_engineAddCommand;
   ui->engineAddPoll = default_engineAddPoll;
+  ui->engineResetUI = default_engineResetUI;
   ui->numParams = 0;
   ui->numCommands = 0;
   ui->numPolls = 0;
@@ -98,7 +99,7 @@ void recrank_lo_server(struct engineUI_t *ui) {
     lo_server_free(ui->st);
   }
   ui->st = lo_server_new("57120", lo_server_error);
-  lo_server_add_method(ui->st, NULL, NULL, generic_handler, NULL);
+  /* lo_server_add_method(ui->st, NULL, NULL, generic_handler, NULL); */
   lo_server_add_method(ui->st, "/report/commands", "", report_commands_handler, ui->matron_addr);
   lo_server_add_method(ui->st, "/report/params", "", report_params_handler, ui->matron_addr);
   // FIXME add the plumbing for polls and uncomment line below
