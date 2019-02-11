@@ -28,10 +28,10 @@ static jack_port_t *output_ports[OUT_PORTS];
  * port to its output port. It will exit when stopped by
  * the user (e.g. using Ctrl-C on a unix-ish operating system)
  */
-volatile void (*myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
-volatile void (*myengine_free)(void* engine) = NULL;
+void (*myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
+void (*myengine_free)(void* engine) = NULL;
 void *myengine = NULL;
-volatile void (*fb_myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
+void (*fb_myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
 void *fb_myengine = NULL;
 volatile int fb_flag = 0;
 int process_block (jack_nframes_t nframes, void *arg) {
