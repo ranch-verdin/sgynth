@@ -1,0 +1,29 @@
+This old repo is full of old, probably dead hacks.  The part I'm keen
+to share is a norns DSP engine host.
+
+to build:
+
+./build_all.sh
+
+then:
+./engine
+
+then in matron:
+load_engine('./engine_example.so')
+engine.prang(0.5)
+engine.prong(0.2)
+
+load_engine('./clack.so')
+engine.cp_gate(1.0)
+engine.cp_decay(200.0)
+engine.cp_gate(1.0)
+
+load_engine('./snarf.so')
+engine.sd_sd(1.0)
+
+load_engine('./drumbum.so')
+engine.bd_bd(1.0)
+
+load_engine('./hatz.so')
+engine.hatz_hh(1.0)
+engine.hatz_oh(1.0)
