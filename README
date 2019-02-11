@@ -9,10 +9,13 @@ then:
 ./engine
 
 then in matron:
+
+-- simple C thing built from engine_example.c
 load_engine('./engine_example.so')
 engine.prang(0.5)
 engine.prong(0.2)
 
+-- assorted faust things...
 load_engine('./clack.so')
 engine.cp_gate(1.0)
 engine.cp_decay(200.0)
