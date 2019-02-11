@@ -1,10 +1,13 @@
 faust --help &>/dev/null
 have_faust=$?
 if [ $have_faust -eq 0 ]; then
+    echo faust is installed, regenerating c code
     for faustfile in snarf drumbum hatz clack; do
+	echo "#include \"faustglue.h\"" > $faustfile.c
+	echo "#define min fmin" >> $faustfile.c
+	echo "#define max fmax" >> $faustfile.c
 	# faust -lang c  -vec -vs 256
-	cp faustglue.h $faustfile.c
-	faust -lang c $faustfile.dsp | sed -e s/"min("/"fmin("/g -e s/"max("/"fmax("/g>> $faustfile.c
+	faust -lang c $faustfile.dsp >> $faustfile.c
     done
 fi
 gcc -O3 -Wall -c -fPIC $faustfile.c -o $faustfile.o
