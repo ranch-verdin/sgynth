@@ -27,3 +27,9 @@ engine.bd_bd(1.0)
 load_engine('./hatz.so')
 engine.hatz_hh(1.0)
 engine.hatz_oh(1.0)
+
+load_engine('./string.so')
+engine.thing_string1_freq(200.0)
+engine.thing_string2_freq(300.0)
+engine.thing_string3_freq(250.0)
+engine.thing_string1_gate(1.0);engine.thing_string2_gate(1.0); engine.thing_string3_gate(1.0);
