@@ -34,6 +34,7 @@ void testaddParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param,
 
 void testaddButton(struct UIGlue *uiInterface, char *buttonName, FAUSTFLOAT *param) {
   testaddParam(uiInterface, buttonName, param, 0, 0, 1, 1);
+  printf("adding trig %s\n", buttonName);
   uiInterface->triggers[uiInterface->n_triggers] = param;// XX nasty hack to get percussive triggers working right (breaks actual notes when expressed as buttons)
   // much better to mark percussive triggers with a :trig but this will do for now...
   uiInterface->n_triggers++;
