@@ -29,7 +29,7 @@ void testaddParam(UIGlue *ui, char *paramName, FAUSTFLOAT *param,
     }
   }
   printf("adding param: %s\n", destString);
-  ui->engineUI->engineAddParamCommand(ui->engineUI, destString, param, init, min, max);
+  ui->engineUI->engineAddTriggerCommand(ui->engineUI, destString, param, init, min, max);
 }
 
 void testaddButton(struct UIGlue *uiInterface, char *buttonName, FAUSTFLOAT *param) {
