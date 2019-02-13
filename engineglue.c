@@ -52,6 +52,35 @@ void default_engineAddParamCommand(struct engineUI_t *ui, char *commandName,
   ui->numCommands++;
 }
 
+static int default_engineTriggerHandler(const char *path, const char *types, lo_arg ** argv,
+					int argc, void *data, void *user_data) {
+  printf("handling trig: %s,%f\n", path, argv[0]->f);
+  struct engineCommand_t *command = user_data;
+  command->newval = argv[0]->f;
+  command->update_flag = 1;
+  return 1;
+}
+
+// this is a command for sending a param update sync-ed to start of block
+void default_engineAddTriggerCommand(struct engineUI_t *ui, char *commandName,
+				     ENGINEFLOAT *param,
+				     ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max) {
+  strncpy(ui->commands[ui->numCommands].name, commandName, ENGINE_MAX_NAMESTRING - 1);
+  ui->commands[ui->numCommands].param.param = param;// FIXME: yuk!
+  ui->commands[ui->numCommands].param.init = init;
+  ui->commands[ui->numCommands].param.min = min;
+  ui->commands[ui->numCommands].param.max = max;
+
+  *param = init;
+  char oscAddr[ENGINE_MAX_NAMESTRING] = "/command/";;
+  strncat(oscAddr, commandName, ENGINE_MAX_NAMESTRING - 1);
+  printf("adding osc command-param method %s f\n", oscAddr);
+  ui->commands[ui->numCommands].update_flag = 0;
+  lo_server_add_method(ui->st, oscAddr, "f", default_engineTriggerHandler, &(ui->commands[ui->numCommands]));
+
+  ui->numCommands++;
+}
+
 void default_engineAddCommand(struct engineUI_t *ui, char *commandName, char *argFmt,
 			      void *liblo_handler, void *userdata) {
   strncpy(ui->commands[ui->numCommands].name, commandName, ENGINE_MAX_NAMESTRING - 1);
@@ -77,6 +106,7 @@ void default_engineAddPoll(struct engineUI_t *ui, char *pollName,
 void default_engineInitUI (struct engineUI_t *ui) {
   ui->engineAddParam = default_engineAddParam;
   ui->engineAddParamCommand = default_engineAddParamCommand;
+  ui->engineAddTriggerCommand = default_engineAddTriggerCommand;
   ui->engineAddCommand = default_engineAddCommand;
   ui->engineAddPoll = default_engineAddPoll;
   ui->engineResetUI = default_engineResetUI;

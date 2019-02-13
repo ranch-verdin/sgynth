@@ -24,6 +24,10 @@ struct engineCommand_t {
   char name[ENGINE_MAX_NAMESTRING];
   char fmt[ENGINE_MAX_NAMESTRING];
   struct engineParam_t param; // need this in order to implement 'command params'
+
+  // need these in order to schedule 'trigger' commands at start of audio frame
+  ENGINEFLOAT newval;
+  int update_flag;
 };
 
 struct enginePoll_t {
@@ -42,6 +46,9 @@ struct engineUI_t{
   void (*engineAddParamCommand)(struct engineUI_t *uiInterface, char *cmdName,
 				ENGINEFLOAT *param,
 				ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max);
+  void (*engineAddTriggerCommand)(struct engineUI_t *uiInterface, char *cmdName,
+				  ENGINEFLOAT *param,
+				  ENGINEFLOAT rest, ENGINEFLOAT min, ENGINEFLOAT max);
   void (*engineAddCommand)(struct engineUI_t *ui, char *commandName, char *argFmt,
 			   void *liblo_handler, void *userdata);
   void (*engineAddPoll)(struct engineUI_t *uiInterface, char *pollName,

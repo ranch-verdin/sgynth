@@ -7,6 +7,10 @@ void default_engineAddParamCommand(struct engineUI_t *ui, char *commandName,
 				   ENGINEFLOAT *param,
 				   ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max);
 
+void default_engineAddTriggerCommand(struct engineUI_t *ui, char *commandName,
+				     ENGINEFLOAT *param,
+				     ENGINEFLOAT init, ENGINEFLOAT min, ENGINEFLOAT max);
+
 void default_engineAddPoll(struct engineUI_t *uiInterface, char *pollName,
 			   ENGINEFLOAT *poll,
 			   ENGINEFLOAT min, ENGINEFLOAT max);

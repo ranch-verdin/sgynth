@@ -34,6 +34,8 @@ void *myengine = NULL;
 void (*fb_myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
 void *fb_myengine = NULL;
 volatile int fb_flag = 0;
+
+
 int process_block (jack_nframes_t nframes, void *arg) {
 
   jack_default_audio_sample_t* jack_in[IN_PORTS];
@@ -53,7 +55,19 @@ int process_block (jack_nframes_t nframes, void *arg) {
     jack_in[j] = jack_port_get_buffer (input_ports[j], nframes);
   }
   if (myengine_next && myengine) {
+    int update_flags[ENGINE_MAX_COMMANDS];
+    for(j=0; j < ui.numCommands; j++) {
+      update_flags[j] = ui.commands[j].update_flag;
+      if (update_flags[j]) {
+	*(ui.commands[j].param.param) = ui.commands[j].newval;
+      }
+    }
     (*myengine_next)(myengine, nframes, jack_in, jack_out);
+    for(j=0; j < ui.numCommands; j++) {
+      if (update_flags[j]) {
+	ui.commands[j].update_flag = 0;
+      }
+    }
   }
   return 0;
 }

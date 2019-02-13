@@ -40,10 +40,11 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
 		     0.5, 0.0, 1.0, 0.01);
 
   // add a simple float trigger command to this engine, resting value 0.0
-  ui->engineAddParamCommand(ui, "prang",
-			    &e->prang,
-			    0.0, 0.0, 1.0);
-  // prong does the same as prang
+  ui->engineAddTriggerCommand(ui, "prang",
+			      &e->prang,
+			      0.0, 0.0, 1.0);
+
+  // prong does the same as prang (but without being threadsafe)
   ui->engineAddCommand(ui, "prong", "f",
 		       prong_callback, &e->env);
 
@@ -56,10 +57,11 @@ void engine_buildUI(void *engine, struct engineUI_t *ui) {
 void engine_next(void *engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) {
   struct example *e = (struct example *) engine;
   int i;
+
+  if(e->prang != 0) {
+    e->env = e->prang;
+  }
   for (i=0; i < count; i++) {
-    if(e->prang != 0) {
-      e->env = e->prang;
-    }
     e->env *= 0.9999;
     float noise = (float)rand()/(float)(RAND_MAX/2.0);
     noise -= 1.0;
