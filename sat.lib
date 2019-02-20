@@ -8,9 +8,9 @@ soft_clip_positive_tanc(lim_thresh, lim_knee_width, sig) = clipped  with {
 };
 
 asym_soft_clipper_tanc (limit_pos, knee_pos, limit_neg, knee_neg, in)
-  = select2 ((in <= 0),
-             soft_clip_positive_tanc(limit_pos, knee_pos, in),
-             0 - soft_clip_positive_tanc(limit_neg, knee_neg, abs(in)));
+= select2 ((in <= 0),
+           soft_clip_positive_tanc(limit_pos, knee_pos, in),
+           0 - soft_clip_positive_tanc(limit_neg, knee_neg, abs(in)));
 
 // Calculations for limiter
 
@@ -20,6 +20,6 @@ tanc(sharpness, x) = 1 - g * (1 - tanhx((x - sharpness) / g)) with {
   g = 1 - sharpness;
 };
 
-transfer_function_lim (lim_thresh, lim_knee_width, env)
-  = soft_clip_positive(lim_thresh, lim_knee_width, env) / max(env, 0.00001);
+transfer_function_lim (lim_thresh, lim_knee_width, env) =
+  soft_clip_positive(lim_thresh, lim_knee_width, env) / max(env, 0.00001);
 

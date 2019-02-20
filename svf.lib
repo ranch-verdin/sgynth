@@ -10,15 +10,15 @@ calc_damp(freq,res) = min(2.0*(1.0 - pow(res, 0.25)), min(2.0, 2.0/freq - freq*0
 calc_freq(fc) = 2.0*sin(PI*min(0.25, fc/SR));
 
 svf_skel(freq,damp,clip,low_,band_,high_,in) = low,band,high with {
-    notch = clip(in - damp * band_);
-    low = clip(low_ + freq * band_);
-    high = clip(notch - low);
-    band = clip(freq * high + band_);
+  notch = clip(in - damp * band_);
+  low = clip(low_ + freq * band_);
+  high = clip(notch - low);
+  band = clip(freq * high + band_);
 };
 
 svf(fc,res,clip) = svf_skel(freq,damp,clip)~(_,_,_) with {
-    freq = calc_freq(fc);
-    damp = calc_damp(freq,res);
+  freq = calc_freq(fc);
+  damp = calc_damp(freq,res);
 };
 
 svf_bpf(f,q,clip) = svf(f,q,clip) : !,_,!;

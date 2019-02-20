@@ -27,7 +27,7 @@ drone = tone * vslider("tone_level",0.54,0.0,1.0,0.01) +
 
 
 strike(decay,gate) =
-   hgroup("hatz", drone * en.are(attack,decay,gate));
+  hgroup("hatz", drone * en.are(attack,decay,gate));
 
 attack = vslider("attack",0.1,0.1,10,0.1) * 0.001;
 length = vslider("length",6.4,0.1,10,0.1) * 0.001;

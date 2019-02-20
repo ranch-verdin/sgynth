@@ -24,10 +24,10 @@ contour = en.are(attack,decay,sd);
 thwack = sd + snappy * contour : fi.lowpass(2, 10000);
 
 clip_func =
-    asym_soft_clipper_tanc(vslider("limit_pos", 0.706, 0.001, 1.0, 0.001),
-    		   	   vslider("knee_pos", 1.9, 1, 10.0, 0.1),
-			   vslider("limit_neg", 0.421, 0.001, 1.0, 0.001),
-			   vslider("knee_neg", 3.9, 1, 10.0, 0.1));
+  asym_soft_clipper_tanc(vslider("limit_pos", 0.706, 0.001, 1.0, 0.001),
+			 vslider("knee_pos", 1.9, 1, 10.0, 0.1),
+			 vslider("limit_neg", 0.421, 0.001, 1.0, 0.001),
+			 vslider("knee_neg", 3.9, 1, 10.0, 0.1));
 
 clip_func1 = hgroup("clip1", clip_func);
 clip_func2 = hgroup("clip2", clip_func);

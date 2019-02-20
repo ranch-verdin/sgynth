@@ -15,11 +15,11 @@ cp = button("gate") : trigger(length);
 clapenv = en.are(attack,decay,cp);
 
 clip_func =
-    asym_soft_clipper_tanc(vslider("limit_pos", 0.706, 0.001, 1.0, 0.001),
-    		   	   vslider("knee_pos", 1.9, 1, 10.0, 0.1),
-			   vslider("limit_neg", 0.421, 0.001, 1.0, 0.001),
-			   vslider("knee_neg", 3.9, 1, 10.0, 0.1));
+  asym_soft_clipper_tanc(vslider("limit_pos", 0.706, 0.001, 1.0, 0.001),
+    		   	 vslider("knee_pos", 1.9, 1, 10.0, 0.1),
+			 vslider("limit_neg", 0.421, 0.001, 1.0, 0.001),
+			 vslider("knee_neg", 3.9, 1, 10.0, 0.1));
 
-clapnoise = no.noise : svf(clapfreq, clapq, clip_func) : !,_,!;
+clapnoise = no.noise : svf(clapfreq, clapq, clip_func) : !, _, ! ;
 
 process = hgroup("cp", clapnoise * clapenv);
