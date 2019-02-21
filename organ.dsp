@@ -24,7 +24,8 @@ harmonics(f) = os.oscrs(f)*a1+os.oscrs(2*f + d2)*a2+os.oscrs(3*f + d3)*a3+os.osc
 basic(freq,gate) = hgroup("organ", harmonics(freq) * my_env(gate));
 
 filt(freq,gate) =
-  hgroup("filter", svf(freq * vslider("wang",1.0,0.1,10.0,0.01) * my_env(gate),
+  hgroup("filter", svf(freq * (vslider("filt_freq",0.5,0.1,5.0,0.01) +
+			       vslider("filt_depth",1.0,0.1,10.0,0.01) * my_env(gate)),
 		       q,
 		       asym_soft_clipper_tanc(vslider("limit_pos", 0.1, 0.001, 1.0, 0.001),
 					      vslider("knee_pos", 2, 1, 10.0, 0.1),
