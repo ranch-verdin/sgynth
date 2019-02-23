@@ -27,7 +27,7 @@ filt(freq,gate) =
   hgroup("filter", svf(freq * (vslider("filt_freq",0.5,0.1,5.0,0.01) +
 			       vslider("filt_depth",1.0,0.1,10.0,0.01) * my_env(gate)),
 		       q,
-		       basic_hard_clip)) with {
+		       pseudotanh)) with {
   q = vslider("q",0.96,0.1,5.0,0.001);
 };
 
