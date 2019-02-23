@@ -1,0 +1,41 @@
+// kickdrum voice
+
+import("stdfaust.lib");
+import("svf.lib");
+import("perc.lib");
+
+// standard parameters
+freq = vslider("freq",100,10,500,10);
+q_bd = 0.85// vslider("q_bd",0.96,0.8,1.0,0.001)
+;
+q_bl = vslider("q_bl",0.989,0.8,0.991,0.001);
+length = 7// vslider("length",6.4,0.1,10,0.1)
+	 * 0.001;
+
+// attack = vslider("attack",1,0.1,10,0.1) * 0.001;
+// decay = vslider("decay",20,2,100,0.1) * 0.001;
+
+kick_strike_aux(gulp,gulpdecay,q,gate) =
+  hgroup("noise",en.ar(0.0001,0.006,gate))*(5 + 5*no.noise ):
+  svf(freq *(1.0 + hgroup("freq",gulp*en.ar(0.006,gulpdecay,gate))),
+      q,
+      asym_soft_clipper_pseudotanc(1.0// vslider("limit_pos", 0.1, 0.001, 1.0, 0.001)
+				  ,
+				   1.4// vslider("knee_pos", 2, 1, 10.0, 0.1)
+				  ,
+				   0.87// vslider("limit_neg", 0.1, 0.001, 1.0, 0.001)
+				  ,
+				   3.0// vslider("knee_neg", 2, 1, 10.0, 0.1)
+				  ))
+  : _,!,! ;
+
+kick_strike(gulp,gulpdecay,q,gate) = hgroup("bd", gate:kick_strike_aux(gulp,gulpdecay,q));
+
+bd = button("bd") : trigger(length);
+bl = button("bl") : trigger(length);
+
+drumbum = kick_strike(vslider("gulp",2.73,0.0,10,0.01),
+		      vslider("gulpdecay",63,0.0,100,0.01) * 0.001,
+	    trig_param_select(bd, q_bd,
+			      bl, q_bl),
+	              trig_either(bd,bl));
