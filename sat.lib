@@ -26,9 +26,9 @@ asym_soft_clipper_pseudotanc (limit_pos, knee_pos, limit_neg, knee_neg, in)
 
 // Calculations for limiter
 
-tanhx(x) = (1-exp(-2*x))/(1+exp(-2*x));
+// tanhx(x) = (1-exp(-2*x))/(1+exp(-2*x));
 
-tanc(sharpness, x) = 1 - g * (1 - tanhx((x - sharpness) / g)) with {
+tanc(sharpness, x) = 1 - g * (1 - ma.tanh((x - sharpness) / g)) with {
   g = 1 - sharpness;
 };
 
