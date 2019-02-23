@@ -4,21 +4,25 @@
 import("stdfaust.lib");
 import("svf.lib");
 import("perc.lib");
-squares = os.square(vslider("freq1",394,300,500,1)) +
-       	  os.square(vslider("freq2",309,300,500,1)) +
-       	  os.square(vslider("freq3",493,300,500,1)) +
-       	  os.square(vslider("freq4",361,300,500,1)) +
-       	  os.square(vslider("freq5",422,300,500,1)) +
-       	  os.square(vslider("freq6",315,300,500,1));
+squares = os.square(// vslider("freq1",394,200,500,1)
+		   394) +
+       	  os.square(// vslider("freq2",309,200,500,1)
+		   309) +
+       	  os.square(// vslider("freq3",493,200,500,1)
+		   493) +
+       	  os.square(// vslider("freq4",361,200,500,1)
+		   361) +
+       	  os.square(// vslider("freq5",422,200,500,1)
+		   422) +
+       	  os.square(// vslider("freq6",315,200,500,1)
+		   203);
 hatz_hpf = svf(vslider("hpfreq",6150.4,300,8000,0.2),
 	       vslider("q",1.04,0.1,5,0.01),
-	       asym_soft_clipper_tanc(vslider("limit_pos", 0.706, 0.001, 1.0, 0.001),
-				      vslider("knee_pos", 1.9, 1, 10.0, 0.1),
-				      vslider("limit_neg", 0.421, 0.001, 1.0, 0.001),
-				      vslider("knee_neg", 3.9, 1, 10.0, 0.1))) :
+	       pseudotanh) :
 	   !,!,_;
 tone = hgroup("osc",  squares) :
-       hgroup("filt", hatz_hpf : hatz_hpf :
+       hgroup("filt", fi.highpass(2,1000) :
+		      hatz_hpf : hatz_hpf :
 	              fi.lowpass(2,vslider("lpfreq",13593,1000,15000,1))) ;
 
 
