@@ -7,16 +7,32 @@ soft_clip_positive_tanc(lim_thresh, lim_knee_width, sig) = clipped  with {
   clipped = lim_thresh * select2(clip, sig / lim_thresh, clipping);
 };
 
+soft_clip_positive_pseudotanc(lim_thresh, lim_knee_width, sig) = clipped  with {
+  sharpness = 1 / lim_knee_width;
+  clip = sig / lim_thresh > sharpness;
+  clipping = pseudotanc(sharpness, min(max(sig / lim_thresh, 0.0), 10.0));
+  clipped = lim_thresh * select2(clip, sig / lim_thresh, clipping);
+};
+
 asym_soft_clipper_tanc (limit_pos, knee_pos, limit_neg, knee_neg, in)
 = select2 ((in <= 0),
            soft_clip_positive_tanc(limit_pos, knee_pos, in),
            0 - soft_clip_positive_tanc(limit_neg, knee_neg, abs(in)));
+
+asym_soft_clipper_pseudotanc (limit_pos, knee_pos, limit_neg, knee_neg, in)
+= select2 ((in <= 0),
+           soft_clip_positive_pseudotanc(limit_pos, knee_pos, in),
+           0 - soft_clip_positive_pseudotanc(limit_neg, knee_neg, abs(in)));
 
 // Calculations for limiter
 
 tanhx(x) = (1-exp(-2*x))/(1+exp(-2*x));
 
 tanc(sharpness, x) = 1 - g * (1 - tanhx((x - sharpness) / g)) with {
+  g = 1 - sharpness;
+};
+
+pseudotanc(sharpness, x) = 1 - g * (1 - pseudotanh((x - sharpness) / g)) with {
   g = 1 - sharpness;
 };
 
@@ -31,9 +47,21 @@ basic_hard_clip(x) = select2(x > 1,
 			     1);
 
 
-pseudotanhx(x) = select2(x > 1,
-			 select2(x < -1,
-				 3/2 * x - 1/2 * x * x * x,
-				 -1),
-			 1);
+pseudotanh_aux(x) = select2(x > 1,
+			    select2(x < -1,
+				    3/2 * x - 1/2 * x * x * x,
+				    -1),
+			    1);
 
+pseudotanh(x) = pseudotanh_aux(x * 2/3);
+
+knee_fade(f1,f2,kink,knee,in) =
+  select2(x > kink + knee/2,
+	  select2(x < kink - knee/2,
+		  fade * f1(in) + (1 - fade(in)) * f2(in),
+		  f1(in)),
+	  f2(in))
+with {
+  fade_sym(x) = 3/2 * x - 1/2 * x * x * x;
+  fade(x) = 0.5 * (fade_sym((x - 1) * 0.5) + 1.0);
+};
