@@ -11,13 +11,13 @@ freq1 = 180 * tone
 freq2 = 330 * tone
 	// vslider("freq2",240,10,1000,10)
 ;
-q1 = 0.916// vslider("q1",0.98,0.8,1.0,0.001)
+q1 = 1 - (0.090 / (0.5 + sizzle * 2))// vslider("q1",0.98,0.8,1.0,0.001)
 ;
-q2 = 0.954// vslider("q2",0.96,0.8,1.0,0.001)
+q2 = 1 - (0.045 / (0.5 + sizzle * 2))// vslider("q2",0.96,0.8,1.0,0.001)
 ;
 attack = 0.1// vslider("attack",1,0.1,10,0.1)
 	 * 0.001;
-decay = 171// vslider("decay",20,2,2000,0.1)
+decay = 500 * (sizzle + 0.2)// * vslider("decay",20,2,2000,0.1)
 	* 0.001;
 length = 2.8// vslider("length",6.4,0.1,10,0.1)
 	 * 0.001;
@@ -25,7 +25,7 @@ snappy = 0.29// vslider("snappy",0.1,0,1,0.01)
 ;
 sizzlefreq = 8108// vslider("sizzlefreq",8000,5000,10000,10)
 ;
-sizzle = vslider("sizzle",0.2,0,0.5,0.01);
+sizzle = vslider("sizzle",0.5,0,1,0.01);
 vol = vslider("vol",0.2,0,1.0,0.01);
 
 sd = button("sd") : trigger(length);

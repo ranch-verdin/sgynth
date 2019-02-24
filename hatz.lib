@@ -42,7 +42,7 @@ attack = 0.1// vslider("attack",0.1,0.1,10,0.1)
 length = 6.4// vslider("length",6.4,0.1,10,0.1)
 	 * 0.001;
 
-hatz(oh,decay_oh,hh,decay_hh) = strike(trig_param_select(hh,decay_hh,
+hatz = strike(trig_param_select(hh,decay_hh,
 							 oh,decay_oh),
 	  			       trig_either(hh,oh)) with {
   oh = button("oh") : trigger(length);

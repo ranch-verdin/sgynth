@@ -29,13 +29,15 @@ kick_strike_aux(gulp,gulpdecay,q,gate) =
 				  ))
   : _,!,! ;
 
-kick_strike(gulp,gulpdecay,q,gate) = hgroup("bd", gate:kick_strike_aux(gulp,gulpdecay,q));
+kick_strike(gulp,gulpdecay,q,gate) = gate:kick_strike_aux(gulp,gulpdecay,q);
 
 bd = button("bd") : trigger(length);
 bl = button("bl") : trigger(length);
 
-drumbum = kick_strike(vslider("gulp",2.73,0.0,10,0.01),
-		      vslider("gulpdecay",63,0.0,100,0.01) * 0.001,
-	    trig_param_select(bd, q_bd,
-			      bl, q_bl),
-	              trig_either(bd,bl));
+drumbum = hgroup("bd", kick_strike(vslider("gulp",2.73,0.0,10,0.01),
+				   vslider("gulpdecay",63,0.0,100,0.01) * 0.001,
+				   trig_param_select(bd, q_bd,
+						     bl, q_bl),
+				   trig_either(bd,bl))
+		       : *(vslider("vol",0.2,0,10.0,0.01))
+		       : + (0.2) : ma.tanh : -(0.2));
