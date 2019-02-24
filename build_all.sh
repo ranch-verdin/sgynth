@@ -5,7 +5,7 @@ gcc -O3 -Wall -c -fPIC faustglue.c -llo -ljack -ldl -o faustglue.o
 
 faust --help &>/dev/null
 have_faust=$?
-for faustfile in snarf drumbum hatz clack string; do
+for faustfile in snarf drumbum hatz clack string organ sgynth; do
     if [ $have_faust -eq 0 ]; then
 	echo faust is installed, regenerating c code for $faustfile
 	echo "#include \"faustglue.h\"" > $faustfile.c

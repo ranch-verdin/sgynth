@@ -19,6 +19,7 @@ Compilation options: c, -scal -ftz 0
 extern "C" {
 #endif
 
+/* link with : "" */
 #include <math.h>
 #include <stdlib.h>
 
@@ -33,26 +34,20 @@ extern "C" {
 
 typedef struct {
 	
+	FAUSTFLOAT fVslider0;
 	int fSamplingFreq;
 	float fConst0;
 	float fConst1;
-	FAUSTFLOAT fVslider0;
 	FAUSTFLOAT fVslider1;
-	FAUSTFLOAT fVslider2;
-	FAUSTFLOAT fVslider3;
-	FAUSTFLOAT fVslider4;
 	float fRec0[2];
 	int iRec2[2];
-	FAUSTFLOAT fVslider5;
 	float fRec1[2];
 	float fConst2;
 	FAUSTFLOAT fButton0;
 	float fVec0[2];
 	float fConst3;
-	FAUSTFLOAT fVslider6;
 	float fRec4[2];
-	FAUSTFLOAT fVslider7;
-	FAUSTFLOAT fVslider8;
+	FAUSTFLOAT fVslider2;
 	float fRec3[2];
 	
 } mydsp;
@@ -137,16 +132,10 @@ void classInitmydsp(int samplingFreq) {
 }
 
 void instanceResetUserInterfacemydsp(mydsp* dsp) {
-	dsp->fVslider0 = (FAUSTFLOAT)5000.0f;
-	dsp->fVslider1 = (FAUSTFLOAT)0.70599999999999996f;
-	dsp->fVslider2 = (FAUSTFLOAT)1.8999999999999999f;
-	dsp->fVslider3 = (FAUSTFLOAT)0.42099999999999999f;
-	dsp->fVslider4 = (FAUSTFLOAT)3.8999999999999999f;
-	dsp->fVslider5 = (FAUSTFLOAT)0.97999999999999998f;
+	dsp->fVslider0 = (FAUSTFLOAT)0.20000000000000001f;
+	dsp->fVslider1 = (FAUSTFLOAT)3000.0f;
 	dsp->fButton0 = (FAUSTFLOAT)0.0f;
-	dsp->fVslider6 = (FAUSTFLOAT)6.4000000000000004f;
-	dsp->fVslider7 = (FAUSTFLOAT)20.0f;
-	dsp->fVslider8 = (FAUSTFLOAT)1.0f;
+	dsp->fVslider2 = (FAUSTFLOAT)90.0f;
 	
 }
 
@@ -213,7 +202,7 @@ void instanceConstantsmydsp(mydsp* dsp, int samplingFreq) {
 	dsp->fConst0 = min(192000.0f, max(1.0f, (float)dsp->fSamplingFreq));
 	dsp->fConst1 = (1.0f / dsp->fConst0);
 	dsp->fConst2 = (6.90999985f / dsp->fConst0);
-	dsp->fConst3 = (0.00100000005f * dsp->fConst0);
+	dsp->fConst3 = (0.00639999984f * dsp->fConst0);
 	
 }
 
@@ -230,75 +219,48 @@ void initmydsp(mydsp* dsp, int samplingFreq) {
 
 void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "cp");
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "attack", &dsp->fVslider8, 1.0f, 0.100000001f, 10.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "clapfreq", &dsp->fVslider0, 5000.0f, 2000.0f, 10000.0f, 10.0f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "clapq", &dsp->fVslider5, 0.980000019f, 0.5f, 5.0f, 0.00100000005f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "decay", &dsp->fVslider7, 20.0f, 2.0f, 2000.0f, 0.100000001f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "clapfreq", &dsp->fVslider1, 3000.0f, 2000.0f, 5000.0f, 10.0f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "decay", &dsp->fVslider2, 90.0f, 2.0f, 1500.0f, 0.100000001f);
 	ui_interface->addButton(ui_interface->uiInterface, "gate", &dsp->fButton0);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "knee_neg", &dsp->fVslider4, 3.9000001f, 1.0f, 10.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "knee_pos", &dsp->fVslider2, 1.89999998f, 1.0f, 10.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "length", &dsp->fVslider6, 6.4000001f, 0.100000001f, 10.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "limit_neg", &dsp->fVslider3, 0.421000004f, 0.00100000005f, 1.0f, 0.00100000005f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "limit_pos", &dsp->fVslider1, 0.70599997f, 0.00100000005f, 1.0f, 0.00100000005f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 0.200000003f, 0.0f, 2.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	
 }
 
 void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
 	FAUSTFLOAT* output0 = outputs[0];
-	float fSlow0 = sinf((3.14159274f * min(0.25f, (dsp->fConst1 * (float)dsp->fVslider0))));
-	float fSlow1 = (2.0f * fSlow0);
-	float fSlow2 = (float)dsp->fVslider1;
-	float fSlow3 = (1.0f / fSlow2);
-	float fSlow4 = (1.0f / (float)dsp->fVslider2);
-	float fSlow5 = (1.0f - fSlow4);
-	float fSlow6 = (2.0f / fSlow5);
-	float fSlow7 = (float)dsp->fVslider3;
-	float fSlow8 = (1.0f / fSlow7);
-	float fSlow9 = (1.0f / (float)dsp->fVslider4);
-	float fSlow10 = (1.0f - fSlow9);
-	float fSlow11 = (2.0f / fSlow10);
-	float fSlow12 = min((2.0f * (1.0f - powf((float)dsp->fVslider5, 0.25f))), min(2.0f, ((1.0f / fSlow0) - fSlow0)));
-	float fSlow13 = (float)dsp->fButton0;
-	float fSlow14 = (dsp->fConst3 * (float)dsp->fVslider6);
-	float fSlow15 = (0.00100000005f * (float)dsp->fVslider7);
-	float fSlow16 = (0.00100000005f * (float)dsp->fVslider8);
+	float fSlow0 = (float)dsp->fVslider0;
+	float fSlow1 = sinf((3.14159274f * min(0.25f, (dsp->fConst1 * (float)dsp->fVslider1))));
+	float fSlow2 = (2.0f * fSlow1);
+	float fSlow3 = min(-0.135579944f, min(2.0f, ((1.0f / fSlow1) - fSlow1)));
+	float fSlow4 = (float)dsp->fButton0;
+	float fSlow5 = (0.00100000005f * (float)dsp->fVslider2);
 	/* C99 loop */
 	{
 		int i;
 		for (i = 0; (i < count); i = (i + 1)) {
-			float fTemp0 = (dsp->fRec0[1] + (fSlow1 * dsp->fRec1[1]));
-			float fTemp1 = (fSlow3 * fTemp0);
-			float fTemp2 = expf((0.0f - (fSlow6 * (min(max(fTemp1, 0.0f), 10.0f) - fSlow4))));
-			float fTemp3 = (fSlow8 * fabsf(fTemp0));
-			float fTemp4 = expf((0.0f - (fSlow11 * (min(max(fTemp3, 0.0f), 10.0f) - fSlow9))));
-			float fTemp5 = ((fTemp0 <= 0.0f)?(0.0f - (fSlow7 * ((fTemp3 > fSlow9)?(1.0f - (fSlow10 * (1.0f - ((1.0f - fTemp4) / (fTemp4 + 1.0f))))):fTemp3))):(fSlow2 * ((fTemp1 > fSlow4)?(1.0f - (fSlow5 * (1.0f - ((1.0f - fTemp2) / (fTemp2 + 1.0f))))):fTemp1)));
-			dsp->fRec0[0] = fTemp5;
+			float fTemp0 = (dsp->fRec0[1] + (fSlow2 * dsp->fRec1[1]));
+			float fTemp1 = (1.25313282f * fTemp0);
+			float fTemp2 = (1.3831259f * fabsf(fTemp0));
+			float fTemp3 = ((fTemp0 <= 0.0f)?(0.0f - (0.72299999f * ((fTemp2 > 0.200000003f)?(1.0f - (0.800000012f * (1.0f - (float)tanhf((float)(1.25f * (min(max(fTemp2, 0.0f), 10.0f) + -0.200000003f)))))):fTemp2))):(0.797999978f * ((fTemp1 > 0.434782594f)?(1.0f - (0.565217376f * (1.0f - (float)tanhf((float)(1.76923072f * (min(max(fTemp1, 0.0f), 10.0f) + -0.434782594f)))))):fTemp1)));
+			dsp->fRec0[0] = fTemp3;
 			dsp->iRec2[0] = ((1103515245 * dsp->iRec2[1]) + 12345);
-			float fTemp6 = ((4.65661287e-10f * (float)dsp->iRec2[0]) - (fSlow12 * dsp->fRec1[1]));
-			float fTemp7 = (fSlow3 * fTemp6);
-			float fTemp8 = expf((0.0f - (fSlow6 * (min(max(fTemp7, 0.0f), 10.0f) - fSlow4))));
-			float fTemp9 = (fSlow8 * fabsf(fTemp6));
-			float fTemp10 = expf((0.0f - (fSlow11 * (min(max(fTemp9, 0.0f), 10.0f) - fSlow9))));
-			float fTemp11 = (((fTemp6 <= 0.0f)?(0.0f - (fSlow7 * ((fTemp9 > fSlow9)?(1.0f - (fSlow10 * (1.0f - ((1.0f - fTemp10) / (fTemp10 + 1.0f))))):fTemp9))):(fSlow2 * ((fTemp7 > fSlow4)?(1.0f - (fSlow5 * (1.0f - ((1.0f - fTemp8) / (fTemp8 + 1.0f))))):fTemp7))) - fTemp5);
-			float fTemp12 = (fSlow3 * fTemp11);
-			float fTemp13 = expf((0.0f - (fSlow6 * (min(max(fTemp12, 0.0f), 10.0f) - fSlow4))));
-			float fTemp14 = (fSlow8 * fabsf(fTemp11));
-			float fTemp15 = expf((0.0f - (fSlow11 * (min(max(fTemp14, 0.0f), 10.0f) - fSlow9))));
-			float fTemp16 = ((fTemp11 <= 0.0f)?(0.0f - (fSlow7 * ((fTemp14 > fSlow9)?(1.0f - (fSlow10 * (1.0f - ((1.0f - fTemp15) / (fTemp15 + 1.0f))))):fTemp14))):(fSlow2 * ((fTemp12 > fSlow4)?(1.0f - (fSlow5 * (1.0f - ((1.0f - fTemp13) / (fTemp13 + 1.0f))))):fTemp12)));
-			float fTemp17 = (dsp->fRec1[1] + (fSlow1 * fTemp16));
-			float fTemp18 = (fSlow3 * fTemp17);
-			float fTemp19 = expf((0.0f - (fSlow6 * (min(max(fTemp18, 0.0f), 10.0f) - fSlow4))));
-			float fTemp20 = (fSlow8 * fabsf(fTemp17));
-			float fTemp21 = expf((0.0f - (fSlow11 * (min(max(fTemp20, 0.0f), 10.0f) - fSlow9))));
-			dsp->fRec1[0] = ((fTemp17 <= 0.0f)?(0.0f - (fSlow7 * ((fTemp20 > fSlow9)?(1.0f - (fSlow10 * (1.0f - ((1.0f - fTemp21) / (fTemp21 + 1.0f))))):fTemp20))):(fSlow2 * ((fTemp18 > fSlow4)?(1.0f - (fSlow5 * (1.0f - ((1.0f - fTemp19) / (fTemp19 + 1.0f))))):fTemp18)));
-			dsp->fVec0[0] = fSlow13;
-			dsp->fRec4[0] = ((((fSlow13 - dsp->fVec0[1]) > 0.0f) > 0)?fSlow14:max(0.0f, (dsp->fRec4[1] + -1.0f)));
-			int iTemp22 = (dsp->fRec4[0] > 0.0f);
-			int iTemp23 = (iTemp22 > 0);
-			float fTemp24 = expf((0.0f - (dsp->fConst2 / (iTemp23?fSlow16:fSlow15))));
-			dsp->fRec3[0] = ((dsp->fRec3[1] * fTemp24) + ((iTemp23?(float)iTemp22:0.0f) * (1.0f - fTemp24)));
-			output0[i] = (FAUSTFLOAT)(dsp->fRec1[0] * dsp->fRec3[0]);
+			float fTemp4 = ((4.65661287e-10f * (float)dsp->iRec2[0]) - (fTemp3 + (fSlow3 * dsp->fRec1[1])));
+			float fTemp5 = (1.25313282f * fTemp4);
+			float fTemp6 = (1.3831259f * fabsf(fTemp4));
+			float fTemp7 = ((fTemp4 <= 0.0f)?(0.0f - (0.72299999f * ((fTemp6 > 0.200000003f)?(1.0f - (0.800000012f * (1.0f - (float)tanhf((float)(1.25f * (min(max(fTemp6, 0.0f), 10.0f) + -0.200000003f)))))):fTemp6))):(0.797999978f * ((fTemp5 > 0.434782594f)?(1.0f - (0.565217376f * (1.0f - (float)tanhf((float)(1.76923072f * (min(max(fTemp5, 0.0f), 10.0f) + -0.434782594f)))))):fTemp5)));
+			float fTemp8 = (dsp->fRec1[1] + (fSlow2 * fTemp7));
+			float fTemp9 = (1.25313282f * fTemp8);
+			float fTemp10 = (1.3831259f * fabsf(fTemp8));
+			dsp->fRec1[0] = ((fTemp8 <= 0.0f)?(0.0f - (0.72299999f * ((fTemp10 > 0.200000003f)?(1.0f - (0.800000012f * (1.0f - (float)tanhf((float)(1.25f * (min(max(fTemp10, 0.0f), 10.0f) + -0.200000003f)))))):fTemp10))):(0.797999978f * ((fTemp9 > 0.434782594f)?(1.0f - (0.565217376f * (1.0f - (float)tanhf((float)(1.76923072f * (min(max(fTemp9, 0.0f), 10.0f) + -0.434782594f)))))):fTemp9)));
+			dsp->fVec0[0] = fSlow4;
+			dsp->fRec4[0] = ((((fSlow4 - dsp->fVec0[1]) > 0.0f) > 0)?dsp->fConst3:max(0.0f, (dsp->fRec4[1] + -1.0f)));
+			int iTemp11 = (dsp->fRec4[0] > 0.0f);
+			int iTemp12 = (iTemp11 > 0);
+			float fTemp13 = expf((0.0f - (dsp->fConst2 / (iTemp12?0.00800000038f:fSlow5))));
+			dsp->fRec3[0] = ((dsp->fRec3[1] * fTemp13) + ((iTemp12?(float)iTemp11:0.0f) * (1.0f - fTemp13)));
+			float fTemp14 = (fSlow0 * (dsp->fRec1[0] * dsp->fRec3[0]));
+			output0[i] = (FAUSTFLOAT)((fTemp14 > 1.0f)?1.0f:((fTemp14 < -1.0f)?-1.0f:fTemp14));
 			dsp->fRec0[1] = dsp->fRec0[0];
 			dsp->iRec2[1] = dsp->iRec2[0];
 			dsp->fRec1[1] = dsp->fRec1[0];
