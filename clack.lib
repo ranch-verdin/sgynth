@@ -13,7 +13,7 @@ clapq = 1.3// vslider("clapq",0.98,0.5,5.0,0.001)
 length = 6.4// vslider("length",6.4,0.1,10,0.1)
 	 * 0.001;
 
-cp = button("gate") : trigger(length);
+cp = button("cp") : trigger(length);
 
 clapenv = en.are(attack,decay,cp);
 
