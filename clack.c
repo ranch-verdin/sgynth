@@ -220,8 +220,8 @@ void initmydsp(mydsp* dsp, int samplingFreq) {
 void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "cp");
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "clapfreq", &dsp->fVslider1, 3000.0f, 2000.0f, 5000.0f, 10.0f);
+	ui_interface->addButton(ui_interface->uiInterface, "cp", &dsp->fButton0);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "decay", &dsp->fVslider2, 90.0f, 2.0f, 1500.0f, 0.100000001f);
-	ui_interface->addButton(ui_interface->uiInterface, "gate", &dsp->fButton0);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 0.200000003f, 0.0f, 2.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	
