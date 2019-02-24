@@ -35,7 +35,9 @@ drone = tone * 0.68// vslider("tone_level",0.54,0.0,1.0,0.01)
 
 
 strike(decay,gate) =
-  hgroup("hatz", drone * en.are(attack,decay,gate));
+  hgroup("hatz", drone * en.are(attack,decay,gate)
+		 : *(vslider("vol",0.2,0,2.0,0.01)
+		     : basic_hard_clip));
 
 attack = 0.1// vslider("attack",0.1,0.1,10,0.1)
 	 * 0.001;
@@ -44,7 +46,8 @@ length = 6.4// vslider("length",6.4,0.1,10,0.1)
 
 hatz = strike(trig_param_select(hh,decay_hh,
 							 oh,decay_oh),
-	  			       trig_either(hh,oh)) with {
+	      trig_either(hh,oh))
+with {
   oh = button("oh") : trigger(length);
   hh = button("hh") : trigger(length);
   decay_oh = vslider("decay_oh",1401.9,2,2000,0.1) * 0.001;

@@ -40,4 +40,4 @@ drumbum = hgroup("bd", kick_strike(vslider("gulp",2.73,0.0,10,0.01),
 						     bl, q_bl),
 				   trig_either(bd,bl))
 		       : *(vslider("vol",0.2,0,10.0,0.01))
-		       : + (0.2) : ma.tanh : -(0.2));
+		       : + (0.2) : pseudotanh : -(0.2));

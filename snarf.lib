@@ -49,4 +49,6 @@ shake = thwack <: svf_bpf(freq1, q1, clip_func),svf_bpf(freq2, q2, clip_func) :>
 rattle = contour * no.noise : fi.lowpass(2,sizzlefreq) : *(sizzle);
 
 
-snarf = hgroup("sd",(shake + rattle) * vol);
+snarf = hgroup("sd",(shake + rattle) * vol
+		    : *(vslider("vol",0.2,0,2.0,0.01) * 8)
+		    : - (0.1) : pseudotanh : +(0.1));

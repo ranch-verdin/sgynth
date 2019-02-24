@@ -29,4 +29,6 @@ clip_func =
 
 clapnoise = no.noise : svf(clapfreq, clapq, clip_func) : !, _, ! ;
 
-clack = hgroup("cp", clapnoise * clapenv);
+clack = hgroup("cp", clapnoise * clapenv
+		     : *(vslider("vol",0.2,0,2.0,0.01))
+		     : basic_hard_clip);
