@@ -1,9 +1,6 @@
 import("stdfaust.lib");
 import("svf.lib");
 
-my_env(gate) = en.are(attack,release,gate) with {
-};
-
 partial(f,N) = os.osccos(f * N *(1 + 0.001 * no.lfnoise(f * N / 10.0)));
 
 harmonics(a1,a2,a3,a4,a5,a6,a8,f) = partial(f,1)*a1 + partial(f,2)*a2 + partial(f,3)*a3 + partial(f,4)*a4 + partial(f,5)*a5 + partial(f,6)*a6 + partial(f,8)*a8 with {
@@ -20,7 +17,7 @@ organ = hgroup("organ",
 	       par(i,4,vibrato,attack,release,colour,drive,a1,a2,a3,a4,a5,a6,a8):
 	       (hgroup("voice1",organ_aux(freq, gate)),hgroup("voice2",organ_aux(freq, gate)),hgroup("voice3",organ_aux(freq, gate)),hgroup("voice4",organ_aux(freq, gate))) :>
 	       *(vslider("vol", 0.1, 0.0,2.0,0.01)): tanh ) with {
-  freq = vslider("freq", 100.0, 10.0, 5000.0, 0.1);
+  freq = vslider("freq", 100.0, 10.0, 2000.0, 0.1);
   gate = vslider("gate",0.0,0.0,1.0,1.0);
   a1 = vslider("a1", 0.5, 0.0, 1.0, 0.01);
   a2 = vslider("a2", 0.5, 0.0, 1.0, 0.01);

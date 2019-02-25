@@ -6,6 +6,7 @@ organ = library("organ.lib");
 string = library("string.lib");
 snarf = library("snarf.lib");
 clack = library("clack.lib");
+wub = library("wub.lib");
 import("sat.lib");
 
 
@@ -33,7 +34,7 @@ panrev(pan,rev,sig) = panned,(panned : *(rev),*(rev)) with {
   panned = sp.panner(pan,sig);
 };
 
-instruments = panrev(0.5,bd_rev,bd),panrev(0.1,hh_rev,hh),panrev(0.6,og_rev,og),panrev(0.8,tw_rev,tw),panrev(0.4,sd_rev,sd),panrev(0.6,cp_rev,cp) :> si.bus(4) with {
+instruments = panrev(0.5,bd_rev,bd),panrev(0.1,hh_rev,hh),panrev(0.6,og_rev,og),panrev(0.8,tw_rev,tw),panrev(0.4,sd_rev,sd),panrev(0.6,cp_rev,cp),panrev(0.3,wb_rev,wb) :> si.bus(4) with {
   bd = drumbum.drumbum;
   bd_rev = 0.1// vslider("bd_rev",0.1,0.0,1.0,0.01)
   ;
@@ -52,6 +53,8 @@ instruments = panrev(0.5,bd_rev,bd),panrev(0.1,hh_rev,hh),panrev(0.6,og_rev,og),
   cp = clack.clack;
   cp_rev = 1.0// vslider("cp_rev",0.1,0.0,1.0,0.01)
   ;
+  wb = wub.wub;
+  wb_rev = 0.6;
 };
 
 

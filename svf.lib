@@ -21,4 +21,6 @@ svf(fc,res,clip) = svf_skel(freq,damp,clip)~(_,_,_) with {
   damp = calc_damp(freq,res);
 };
 
-svf_bpf(f,q,clip) = svf(f,q,clip) : !,_,!;
+svf_lpf(f,q,clip) = svf(f,q,clip) : _,!,! ;
+svf_bpf(f,q,clip) = svf(f,q,clip) : !,_,! ;
+svf_hpf(f,q,clip) = svf(f,q,clip) : !,!,_ ;

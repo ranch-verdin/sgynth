@@ -1,0 +1,41 @@
+import("stdfaust.lib");
+import("sat.lib");
+import("svf.lib");
+
+saw_distortion_curve(colour) = + (colour) : pseudotanh : -(colour);
+saw_filter(freq,gate) = hgroup("filter",
+			       *(drive)
+			       : svf_lpf(filt_freq,
+					 filt_q,
+					 saw_distortion_curve(colour))) with {
+  colour = 0.12// vslider("colour", 0.1, 0.0, 0.50, 0.01)
+  ;
+  drive = 0.42// vslider("drive", 0.1, 0.1,2.0,0.01)
+  ;
+  filt_q = vslider("filter_q",0.889,0.8,1.1,0.001);
+  filt_env = vslider("filter_env",0.2,0,10.0,0.01);
+  filt_basis = vslider("filter_basis",0.2,0,10.0,0.01);
+  fattack = vslider("fattack",1,0.1,1000,0.1) * 0.001;
+  fdecay = vslider("fdecay",1,0.1,1000,0.1) * 0.001;
+  fsustain = vslider("fsustain",0.5,0.0,1.0,0.1);
+  frelease = vslider("frelease",1,0.1,1000,0.1) * 0.001;
+  env = en.adsre(fattack,fdecay,fsustain,frelease,gate);
+  filt_freq = freq*(filt_basis + env * filt_env);
+};
+
+sawnote(freq,gate) = os.sawtooth(freq) * en.are(attack,release,gate)
+		     : fi.lowpass(2,6000)
+		     :saw_filter(freq,gate)
+		     : *(vslider("vol",0.2,0,5.0,0.01))
+		     : fi.lowpass(2,6000)
+		     : + (0.2) : pseudotanh : -(0.2) with {
+  attack = 0.1// vslider("attack",1,0.1,1000,0.1)
+	   * 0.001;
+  release = vslider("release",1,0.1,1000,0.1) * 0.001;
+};
+
+wub = hgroup("wub",freq,gate :hgroup("controls",sawnote)) with {
+  freq = vslider("freq", 100.0, 10.0, 2000.0, 0.1) : si.smooth(1 - vslider("portamento",0.5,0.01,1.0,0.01) * 0.001);
+  gate = vslider("gate",0.0,0.0,1.0,1.0);
+};
+
