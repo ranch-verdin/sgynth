@@ -16,7 +16,7 @@ with{
   N = ma.SR/freq;
   b0 = 1;
   aN = ba.tau2pole(res * freq * 0.00001);
-  excitation = (1.0-noise+noise*no.noise)*en.ar(attack,decay,gate);
+  excitation = (1.0-noise+noise*no.noise)*en.ar(attack,decay,gate) : fi.lowpass(2,6000);
 };
 
 inargs = vgroup("params",res,limit_pos,knee_pos,limit_neg,knee_neg,attack,decay,noise,sign) with {

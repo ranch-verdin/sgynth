@@ -1,7 +1,7 @@
 import("stdfaust.lib");
 import("svf.lib");
 
-partial(f,N) = os.osccos(f * N);
+partial(f,N) = os.osccos(f * (N + (no.noises(9,int(N)) : si.smooth(0.998) :*(0.1))));
 
 harmonics(a1,a2,a3,a4,a5,a6,a8,f) = partial(f,1)*a1 + partial(f,2)*a2 + partial(f,3)*a3 + partial(f,4)*a4 + partial(f,5)*a5 + partial(f,6)*a6 + partial(f,8)*a8 with {
 };
@@ -10,13 +10,14 @@ basic(a1,a2,a3,a4,a5,a6,a8,attack,release,vibrato,freq,gate) = harmonics(a1,a2,a
 
 organ_aux(freq,gate,vibrato,attack,release,colour,drive,a1,a2,a3,a4,a5,a6,a8) =
   basic(a1,a2,a3,a4,a5,a6,a8,attack,release,vibrato,freq,gate) : *(drive)
-  : fi.lowpass(2,6000) : +(colour) : tanh : -(colour): fi.dcblockerat(5) with {
+  : fi.lowpass(2,10000) : +(colour) : tanh : -(colour): fi.dcblockerat(5) with {
 };
 
 organ = hgroup("organ",
 	       par(i,4,vibrato,attack,release,colour,drive,a1,a2,a3,a4,a5,a6,a8):
 	       (hgroup("voice1",organ_aux(freq, gate)),hgroup("voice2",organ_aux(freq, gate)),hgroup("voice3",organ_aux(freq, gate)),hgroup("voice4",organ_aux(freq, gate))) :>
-	       *(vslider("vol", 0.1, 0.0,2.0,0.01)): tanh ) with {
+	       *(vslider("vol", 0.1, 0.0,2.0,0.01)) :
+	       fi.lowpass(2,10000) : -(main_colour) : tanh : +(main_colour)) with {
   freq = vslider("freq", 100.0, 10.0, 2000.0, 0.1);
   gate = vslider("gate",0.0,0.0,1.0,1.0);
   a1 = vslider("a1", 0.5, 0.0, 1.0, 0.01);
@@ -29,6 +30,7 @@ organ = hgroup("organ",
   vibrato = vslider("vibrato",1,0.0,10,0.1) * 0.01;
   attack = vslider("attack",1,0.1,100,0.1) * 0.001;
   release = vslider("release",1,0.1,1000,0.1) * 0.001;
-  colour = vslider("colour", 0.1, 0.0, 1.0, 0.01);
+  colour = vslider("drivecolour", 0.1, 0.0, 1.0, 0.01);
+  main_colour = vslider("volcolour", 0.1, 0.0, 1.0, 0.01);
   drive = vslider("drive", 0.1, 0.0,2.0,0.01);
 };
