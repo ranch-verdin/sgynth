@@ -54,7 +54,7 @@ void default_engineAddParamCommand(struct engineUI_t *ui, char *commandName,
 
 static int default_engineTriggerHandler(const char *path, const char *types, lo_arg ** argv,
 					int argc, void *data, void *user_data) {
-  printf("handling trig: %s,%f\n", path, argv[0]->f);
+  /* printf("handling trig: %s,%f\n", path, argv[0]->f); */
   struct engineCommand_t *command = user_data;
   command->newval = argv[0]->f;
   command->update_flag = 1;
