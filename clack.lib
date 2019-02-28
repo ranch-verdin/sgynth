@@ -1,34 +1,30 @@
 // thanks, sessionville!
 // http://sessionville.com/articles/anatomy-of-a-drum-machine
+// thanks, clacktronics!
+// http://clacktronics.co.uk/research/drumlab/analogue-hand-claps/
+
 import("stdfaust.lib");
 import("svf.lib");
 import("perc.lib");
 
-attack = 8// vslider("attack",1,0.1,10,0.1)
+attack = 0.1// vslider("attack",1,0.1,10,0.1)
 	 * 0.001;
 decay = vslider("decay",90,2,1500,0.1) * 0.001;
-clapfreq = vslider("clapfreq",3000,2000,5000,10);
-clapq = 1.3// vslider("clapq",0.98,0.5,5.0,0.001)
+clapfreq = vslider("clapfreq",3000,1000,3000,10);
+clapq = 0.569// vslider("clapq",0.98,0.5,5.0,0.001)
 ;
-length = 6.4// vslider("length",6.4,0.1,10,0.1)
+length = 1// vslider("length",6.4,0.1,10,0.1)
 	 * 0.001;
 
-cp = button("cp") : trigger(length);
+clackdel = 11// vslider("clackdel", 11, 5, 50, 0.1)
+;
+
+cp = button("cp") : trigger(length) <: _,de.delay(SR,1 * SR / 1000 * clackdel ), de.delay(SR,2.2 * SR / 1000 * clackdel), de.delay(SR,2.8 * SR / 1000 * clackdel), de.delay(SR,3.2 * SR / 1000 * clackdel) :> _;
 
 clapenv = en.are(attack,decay,cp);
 
-clip_func =
-  asym_soft_clipper_tanc(0.798// vslider("limit_pos", 0.706, 0.001, 1.0, 0.001)
-			,
-    		   	2.3 // vslider("knee_pos", 1.9, 1, 10.0, 0.1)
-			,
-			0.723 // vslider("limit_neg", 0.421, 0.001, 1.0, 0.001)
-			,
-			5.0 // vslider("knee_neg", 3.9, 1, 10.0, 0.1)
-			);
-
-clapnoise = no.noise : svf(clapfreq, clapq, clip_func) : !, _, ! ;
+clapnoise = no.noise : svf(clapfreq, clapq, basic_hard_clip) : !, _, ! ;
 
 clack = hgroup("cp", clapnoise * clapenv
-		     : *(vslider("vol",0.2,0,2.0,0.01))
-		     : basic_hard_clip);
+		     : *(vslider("vol",0.2,0,5.0,0.01))
+		     : tanh);

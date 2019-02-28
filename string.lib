@@ -31,7 +31,17 @@ inargs = vgroup("params",res,limit_pos,knee_pos,limit_neg,knee_neg,attack,decay,
   sign = hslider("sign", 1.0, -1.0, 1.0, 2.0);
 };
 
+stereo_spread(s1,s2,s3,s4) = (sp.panner(0.2,s1),
+			      sp.panner(0.4,s2),
+			      sp.panner(0.6,s3),
+			      sp.panner(0.8,s4)) :> (_,_) ;
+										   
+
 string = hgroup("string", (inargs : hgroup("string1", myString)),
 		(inargs : hgroup("string2", myString)),
 		(inargs : hgroup("string3", myString)),
-		(inargs : hgroup("string4", myString))) :> _ ;
+		(inargs : hgroup("string4", myString))
+		: par(i,4,*(vslider("vol",0.2,0,10.0,0.01)))
+		: stereo_spread
+		: par(i,2,(+(0.1) : pseudotanh : -(0.1))));
+
