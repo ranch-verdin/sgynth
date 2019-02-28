@@ -27,7 +27,7 @@ with{
 };
 
 verbbus(l,r,l_wet,r_wet) =  hgroup("reverb",verb(l_wet*wet,r_wet*wet) :> +(l),+(r)) with {
-  wet = vslider("level",0.1,0.0,2.0,0.01);
+  wet = vslider("level",1.5,0.0,2.0,0.01);
 };
 
 panrev(pan,rev,sig) = panned,(panned : *(rev),*(rev)) with {
@@ -60,9 +60,9 @@ instruments = panrev(0.5,bd_rev,bd),panrev(0.1,hh_rev,hh),panrev(0.6,og_rev,og),
 };
 
 sgynth_buscompress = co.compressor_stereo(vslider("ratio",3.0,1.0,10.0,0.01),
-					  vslider("threshold",-10,-40.0,0.0,0.01),
-					  vslider("attack",0.1,0.0,50.0,0.01) * 0.001,
-					  vslider("release",0.1,0.0,500.0,0.01) * 0.001);
+					  vslider("threshold",-9,-40.0,0.0,0.01),
+					  vslider("attack",10,0.0,50.0,0.01) * 0.001,
+					  vslider("release",50,0.0,500.0,0.01) * 0.001);
 
 
 process = tgroup("sgynth", instruments : verbbus : hgroup("compressor", sgynth_buscompress) : ma.tanh,ma.tanh );

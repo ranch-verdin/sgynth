@@ -19,15 +19,12 @@ Compilation options: c, -scal -ftz 0
 extern "C" {
 #endif
 
+/* link with : "" */
 #include <math.h>
 #include <stdlib.h>
 
 static float mydsp_faustpower2_f(float value) {
 	return (value * value);
-	
-}
-static float mydsp_faustpower3_f(float value) {
-	return ((value * value) * value);
 	
 }
 
@@ -151,12 +148,12 @@ void classInitmydsp(int samplingFreq) {
 }
 
 void instanceResetUserInterfacemydsp(mydsp* dsp) {
-	dsp->fVslider0 = (FAUSTFLOAT)0.20000000000000001f;
-	dsp->fVslider1 = (FAUSTFLOAT)100.0f;
-	dsp->fVslider2 = (FAUSTFLOAT)2.73f;
+	dsp->fVslider0 = (FAUSTFLOAT)1.0f;
+	dsp->fVslider1 = (FAUSTFLOAT)60.0f;
+	dsp->fVslider2 = (FAUSTFLOAT)4.7300000000000004f;
 	dsp->fButton0 = (FAUSTFLOAT)0.0f;
 	dsp->fButton1 = (FAUSTFLOAT)0.0f;
-	dsp->fVslider3 = (FAUSTFLOAT)63.0f;
+	dsp->fVslider3 = (FAUSTFLOAT)12.0f;
 	dsp->fVslider4 = (FAUSTFLOAT)0.98899999999999999f;
 	
 }
@@ -311,12 +308,12 @@ void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->addButton(ui_interface->uiInterface, "bd", &dsp->fButton0);
 	ui_interface->addButton(ui_interface->uiInterface, "bl", &dsp->fButton1);
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "freq");
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "gulp", &dsp->fVslider2, 2.73000002f, 0.0f, 10.0f, 0.00999999978f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "gulpdecay", &dsp->fVslider3, 63.0f, 0.0f, 100.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "gulp", &dsp->fVslider2, 4.73000002f, 0.0f, 10.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "gulpdecay", &dsp->fVslider3, 12.0f, 0.0f, 100.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "freq", &dsp->fVslider1, 100.0f, 10.0f, 500.0f, 10.0f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "freq", &dsp->fVslider1, 60.0f, 10.0f, 500.0f, 10.0f);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "q_bl", &dsp->fVslider4, 0.989000022f, 0.800000012f, 0.990999997f, 0.00100000005f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 0.200000003f, 0.0f, 10.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 1.0f, 0.0f, 10.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	
 }
@@ -363,7 +360,7 @@ void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outpu
 			dsp->iRec6[0] = ((1103515245 * dsp->iRec6[1]) + 12345);
 			int iTemp14 = ((dsp->iVec3[1] <= 0) & (iTemp2 > 0));
 			dsp->fRec7[0] = ((dsp->fRec7[1] * (float)(1 - iTemp14)) + ((float)iTemp14 * ((0.850000024f * (float)iTemp0) + (fSlow8 * (float)iTemp1))));
-			float fTemp15 = (((iTemp13?((dsp->fRec5[0] < 0.0f)?0.0f:(iTemp13?(dsp->fConst7 * dsp->fRec5[0]):1.0f)):((dsp->fRec5[0] < dsp->fConst5)?((dsp->fConst4 * (0.0f - (dsp->fRec5[0] - dsp->fConst6))) + 1.0f):0.0f)) * ((2.32830644e-09f * (float)dsp->iRec6[0]) + 5.0f)) - (fTemp12 + (dsp->fRec1[1] * min((2.0f * (1.0f - powf(dsp->fRec7[0], 0.25f))), min(2.0f, ((1.0f / fTemp5) - fTemp5))))));
+			float fTemp15 = (((iTemp13?((dsp->fRec5[0] < 0.0f)?0.0f:(iTemp13?(dsp->fConst7 * dsp->fRec5[0]):1.0f)):((dsp->fRec5[0] < dsp->fConst5)?((dsp->fConst4 * (0.0f - (dsp->fRec5[0] - dsp->fConst6))) + 1.0f):0.0f)) * ((3.25962901e-09f * (float)dsp->iRec6[0]) + 3.0f)) - (fTemp12 + (dsp->fRec1[1] * min((2.0f * (1.0f - powf(dsp->fRec7[0], 0.25f))), min(2.0f, ((1.0f / fTemp5) - fTemp5))))));
 			float fTemp16 = (min(max(fTemp15, 0.0f), 10.0f) + -0.714285731f);
 			float fTemp17 = (2.33333325f * fTemp16);
 			float fTemp18 = (1.14942527f * fabsf(fTemp15));
@@ -377,10 +374,7 @@ void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outpu
 			float fTemp26 = (min(max(fTemp25, 0.0f), 10.0f) + -0.333333343f);
 			float fTemp27 = (1.0f * fTemp26);
 			dsp->fRec1[0] = ((fTemp22 <= 0.0f)?(0.0f - (0.870000005f * ((fTemp25 > 0.333333343f)?(1.0f - (0.666666687f * (1.0f - ((fTemp27 > 1.0f)?1.0f:((fTemp27 < -1.0f)?-1.0f:(fTemp26 * (1.5f - (0.5f * mydsp_faustpower2_f(fTemp26))))))))):fTemp25))):((fTemp22 > 0.714285731f)?(1.0f - (0.285714298f * (1.0f - ((fTemp24 > 1.0f)?1.0f:((fTemp24 < -1.0f)?-1.0f:(fTemp23 * (3.5f - (6.35185194f * mydsp_faustpower2_f(fTemp23))))))))):fTemp22));
-			float fTemp28 = (fSlow0 * dsp->fRec0[0]);
-			float fTemp29 = (fTemp28 + 0.200000003f);
-			float fTemp30 = (0.666666687f * fTemp29);
-			output0[i] = (FAUSTFLOAT)(((fTemp30 > 1.0f)?1.0f:((fTemp30 < -1.0f)?-1.0f:(fTemp28 + (0.200000003f - (0.148148149f * mydsp_faustpower3_f(fTemp29)))))) + -0.200000003f);
+			output0[i] = (FAUSTFLOAT)((float)tanhf((float)((fSlow0 * dsp->fRec0[0]) + -0.100000001f)) + 0.100000001f);
 			dsp->fVec0[1] = dsp->fVec0[0];
 			dsp->fVec1[1] = dsp->fVec1[0];
 			dsp->fRec3[1] = dsp->fRec3[0];

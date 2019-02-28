@@ -22,9 +22,9 @@ engine.prong(0.2)
 
 -- assorted faust things...
 load_engine('./clack.so')
-engine.cp_gate(1.0)
-engine.cp_decay(200.0)
-engine.cp_gate(1.0)
+engine.cp_cp(1.0)
+engine.cp_decay(500.0)
+engine.cp_cp(1.0)
 
 load_engine('./snarf.so')
 engine.sd_sd(1.0)
@@ -37,7 +37,7 @@ engine.hatz_hh(1.0)
 engine.hatz_oh(1.0)
 
 load_engine('./string.so')
-engine.thing_string1_freq(200.0)
-engine.thing_string2_freq(300.0)
-engine.thing_string3_freq(250.0)
-engine.thing_string1_gate(1.0);engine.thing_string2_gate(1.0); engine.thing_string3_gate(1.0);
+engine.string_string1_freq(200.0)
+engine.string_string2_freq(300.0)
+engine.string_string3_freq(250.0)
+engine.string_string1_gate(1.0);engine.string_string2_gate(1.0); engine.string_string3_gate(1.0);

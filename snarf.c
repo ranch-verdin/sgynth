@@ -42,11 +42,10 @@ static float mydsp_faustpower3_f(float value) {
 typedef struct {
 	
 	FAUSTFLOAT fVslider0;
-	FAUSTFLOAT fVslider1;
 	int fSamplingFreq;
 	float fConst0;
 	float fConst1;
-	FAUSTFLOAT fVslider2;
+	FAUSTFLOAT fVslider1;
 	float fRec0[2];
 	float fConst2;
 	float fConst3;
@@ -56,7 +55,7 @@ typedef struct {
 	float fConst5;
 	float fRec3[2];
 	float fConst6;
-	FAUSTFLOAT fVslider3;
+	FAUSTFLOAT fVslider2;
 	float fRec4[2];
 	float fConst7;
 	float fConst8;
@@ -158,10 +157,9 @@ void classInitmydsp(int samplingFreq) {
 
 void instanceResetUserInterfacemydsp(mydsp* dsp) {
 	dsp->fVslider0 = (FAUSTFLOAT)0.20000000000000001f;
-	dsp->fVslider1 = (FAUSTFLOAT)0.20000000000000001f;
-	dsp->fVslider2 = (FAUSTFLOAT)1.0f;
+	dsp->fVslider1 = (FAUSTFLOAT)1.0f;
 	dsp->fButton0 = (FAUSTFLOAT)0.0f;
-	dsp->fVslider3 = (FAUSTFLOAT)0.5f;
+	dsp->fVslider2 = (FAUSTFLOAT)0.5f;
 	
 }
 
@@ -293,22 +291,21 @@ void initmydsp(mydsp* dsp, int samplingFreq) {
 void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "sd");
 	ui_interface->addButton(ui_interface->uiInterface, "sd", &dsp->fButton0);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "sizzle", &dsp->fVslider3, 0.5f, 0.0f, 1.0f, 0.00999999978f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "tone", &dsp->fVslider2, 1.0f, 1.0f, 2.0f, 0.00999999978f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 0.200000003f, 0.0f, 1.0f, 0.00999999978f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider1, 0.200000003f, 0.0f, 2.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "sizzle", &dsp->fVslider2, 0.5f, 0.0f, 1.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "tone", &dsp->fVslider1, 1.0f, 1.0f, 2.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 0.200000003f, 0.0f, 2.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	
 }
 
 void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
 	FAUSTFLOAT* output0 = outputs[0];
-	float fSlow0 = (8.0f * ((float)dsp->fVslider0 * (float)dsp->fVslider1));
-	float fSlow1 = (float)dsp->fVslider2;
+	float fSlow0 = (8.0f * (float)dsp->fVslider0);
+	float fSlow1 = (float)dsp->fVslider1;
 	float fSlow2 = sinf((3.14159274f * min(0.25f, (dsp->fConst1 * fSlow1))));
 	float fSlow3 = (2.0f * fSlow2);
 	float fSlow4 = (float)dsp->fButton0;
-	float fSlow5 = (float)dsp->fVslider3;
+	float fSlow5 = (float)dsp->fVslider2;
 	float fSlow6 = (0.5f * (fSlow5 + 0.200000003f));
 	float fSlow7 = ((2.0f * fSlow5) + 0.5f);
 	float fSlow8 = min((2.0f * (1.0f - powf((1.0f - (0.0900000036f / fSlow7)), 0.25f))), min(2.0f, ((1.0f / fSlow2) - fSlow2)));

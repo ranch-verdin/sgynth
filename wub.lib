@@ -12,13 +12,13 @@ saw_filter(freq,gate) = hgroup("filter",
   ;
   drive = 0.42// vslider("drive", 0.1, 0.1,2.0,0.01)
   ;
-  filt_q = vslider("filter_q",0.889,0.8,1.1,0.001);
-  filt_env = vslider("filter_env",0.2,0,10.0,0.01);
-  filt_basis = vslider("filter_basis",0.2,0,10.0,0.01);
-  fattack = vslider("fattack",1,0.1,1000,0.1) * 0.001;
-  fdecay = vslider("fdecay",1,0.1,1000,0.1) * 0.001;
-  fsustain = vslider("fsustain",0.5,0.0,1.0,0.1);
-  frelease = vslider("frelease",1,0.1,1000,0.1) * 0.001;
+  filt_q = vslider("filter_q",1.2,0.8,1.1,0.001);
+  filt_env = vslider("filter_env",8.0,0,10.0,0.01);
+  filt_basis = vslider("filter_basis",0.8,0,10.0,0.01);
+  fattack = vslider("fattack",50,0.1,1000,0.1) * 0.001;
+  fdecay = vslider("fdecay",90,0.1,1000,0.1) * 0.001;
+  fsustain = vslider("fsustain",0.8,0.0,1.0,0.1);
+  frelease = vslider("frelease",50.0,0.1,1000,0.1) * 0.001;
   env = en.adsre(fattack,fdecay,fsustain,frelease,gate);
   filt_freq = freq*(filt_basis + env * filt_env);
 };
