@@ -26,7 +26,6 @@ snappy = 0.29// vslider("snappy",0.1,0,1,0.01)
 sizzlefreq = 8108// vslider("sizzlefreq",8000,5000,10000,10)
 ;
 sizzle = vslider("sizzle",0.5,0,1,0.01);
-vol = vslider("vol",0.2,0,1.0,0.01);
 
 sd = button("sd") : trigger(length);
 
@@ -49,6 +48,6 @@ shake = thwack <: svf_bpf(freq1, q1, clip_func),svf_bpf(freq2, q2, clip_func) :>
 rattle = contour * no.noise : fi.lowpass(2,sizzlefreq) : *(sizzle);
 
 
-snarf = hgroup("sd",(shake + rattle) * vol
+snarf = hgroup("sd",(shake + rattle)
 		    : *(vslider("vol",0.2,0,2.0,0.01) * 8)
 		    : - (0.1) : pseudotanh : +(0.1));
