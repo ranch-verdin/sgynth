@@ -290,21 +290,21 @@ void initmydsp(mydsp* dsp, int samplingFreq) {
 
 void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "wub");
-	ui_interface->openHorizontalBox(ui_interface->uiInterface, "controls");
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "freq", &dsp->fVslider1, 100.0f, 10.0f, 2000.0f, 0.100000001f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "gate", &dsp->fVslider5, 0.0f, 0.0f, 1.0f, 1.0f);
+	ui_interface->openHorizontalBox(ui_interface->uiInterface, "params");
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "filter");
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "fattack", &dsp->fVslider7, 50.0f, 0.100000001f, 1000.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "fdecay", &dsp->fVslider8, 90.0f, 0.100000001f, 1000.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "filter_basis", &dsp->fVslider3, 0.800000012f, 0.0f, 10.0f, 0.00999999978f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "filter_env", &dsp->fVslider4, 8.0f, 0.0f, 10.0f, 0.00999999978f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "filter_q", &dsp->fVslider11, 1.20000005f, 0.800000012f, 1.10000002f, 0.00100000005f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "frelease", &dsp->fVslider6, 50.0f, 0.100000001f, 1000.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "fsustain", &dsp->fVslider9, 0.800000012f, 0.0f, 1.0f, 0.100000001f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "attack", &dsp->fVslider7, 50.0f, 0.100000001f, 1000.0f, 0.100000001f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "basefreq", &dsp->fVslider3, 0.800000012f, 0.0f, 10.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "decay", &dsp->fVslider8, 90.0f, 0.100000001f, 1000.0f, 0.100000001f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "env", &dsp->fVslider4, 8.0f, 0.0f, 10.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "q", &dsp->fVslider11, 1.20000005f, 0.800000012f, 1.10000002f, 0.00100000005f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "release", &dsp->fVslider6, 50.0f, 0.100000001f, 1000.0f, 0.100000001f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "sustain", &dsp->fVslider9, 0.800000012f, 0.0f, 1.0f, 0.100000001f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "release", &dsp->fVslider10, 1.0f, 0.100000001f, 1000.0f, 0.100000001f);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 0.200000003f, 0.0f, 5.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "freq", &dsp->fVslider1, 100.0f, 10.0f, 2000.0f, 0.100000001f);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "gate", &dsp->fVslider5, 0.0f, 0.0f, 1.0f, 1.0f);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "portamento", &dsp->fVslider2, 0.5f, 0.00999999978f, 1.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	

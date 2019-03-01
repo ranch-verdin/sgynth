@@ -12,13 +12,13 @@ saw_filter(freq,gate) = hgroup("filter",
   ;
   drive = 0.42// vslider("drive", 0.1, 0.1,2.0,0.01)
   ;
-  filt_q = vslider("filter_q",1.2,0.8,1.1,0.001);
-  filt_env = vslider("filter_env",8.0,0,10.0,0.01);
-  filt_basis = vslider("filter_basis",0.8,0,10.0,0.01);
-  fattack = vslider("fattack",50,0.1,1000,0.1) * 0.001;
-  fdecay = vslider("fdecay",90,0.1,1000,0.1) * 0.001;
-  fsustain = vslider("fsustain",0.8,0.0,1.0,0.1);
-  frelease = vslider("frelease",50.0,0.1,1000,0.1) * 0.001;
+  filt_q = vslider("q",1.2,0.8,1.1,0.001);
+  filt_env = vslider("env",8.0,0,10.0,0.01);
+  filt_basis = vslider("basefreq",0.8,0,10.0,0.01);
+  fattack = vslider("attack",50,0.1,1000,0.1) * 0.001;
+  fdecay = vslider("decay",90,0.1,1000,0.1) * 0.001;
+  fsustain = vslider("sustain",0.8,0.0,1.0,0.1);
+  frelease = vslider("release",50.0,0.1,1000,0.1) * 0.001;
   env = en.adsre(fattack,fdecay,fsustain,frelease,gate);
   filt_freq = freq*(filt_basis + env * filt_env);
 };
@@ -34,7 +34,7 @@ sawnote(freq,gate) = os.sawtooth(freq) * en.are(attack,release,gate)
   release = vslider("release",1,0.1,1000,0.1) * 0.001;
 };
 
-wub = hgroup("wub",freq,gate :hgroup("controls",sawnote)) with {
+wub = hgroup("wub",freq,gate :hgroup("params",sawnote)) with {
   freq = vslider("freq", 100.0, 10.0, 2000.0, 0.1) : si.smooth(1 - vslider("portamento",0.5,0.01,1.0,0.01) * 0.001);
   gate = vslider("gate",0.0,0.0,1.0,1.0);
 };
