@@ -42,3 +42,8 @@ engine.string_string1_freq(200.0)
 engine.string_string2_freq(300.0)
 engine.string_string3_freq(250.0)
 engine.string_string1_gate(1.0);engine.string_string2_gate(1.0); engine.string_string3_gate(1.0);
+
+TODO:
+
+* Write a makefile
+* Clean up the concepts of 'param' and 'command' (requires work also on norns' matron side)
