@@ -1,3 +1,5 @@
+import("stdfaust.lib");
+
 // Calculations for Soft-Clippers
 
 soft_clip_positive_tanc(lim_thresh, lim_knee_width, sig) = clipped  with {
