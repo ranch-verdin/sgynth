@@ -11,6 +11,9 @@ to build:
 
 ./build_all.sh
 
+This should spit out an executable (./engine) and several .so files
+into the root directory of this repository
+
 then:
 ./engine
 
