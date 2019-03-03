@@ -70,7 +70,9 @@ engine.string_string1_gate(1.0);engine.string_string2_gate(1.0); engine.string_s
 
 An 'engineHost' (e.g crone/softcut or ./engine) communicates with a
 'controllerHost' (e.g matron or sguenz) exclusively via OSC
-commands. Here is a summary of the commands used:
+commands. Here is a summary of the commands used - engineHost binds
+and receives on UDP port 57120, controller binds and receives on UDP
+port 8888:
 
 ** Handshake **
 Request:
