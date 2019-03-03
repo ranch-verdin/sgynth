@@ -82,7 +82,7 @@ eng -> con ("/crone/ready")
 Request:
 con->eng ("/engine/load/name" "monophonic_synth_engine")
 Responses:
-same as 'report commands' (see immediately below)
+'report commands', then report polls (see immediately below)
 
 ** report commands **
 Request:
