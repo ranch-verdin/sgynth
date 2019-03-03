@@ -1,6 +1,10 @@
+******* INTRO *******
+
 This is a prototype norns DSP engine host.  You can build DSPs in C
 (see engine_example.c) or in faust (see snarf.dsp, clack.dsp,
 drumbum.dsp, string.dsp, hatz.dsp).
+
+******* BUILD *******
 
 You will need the faust compiler installed for faust examples to
 update the faust code.  However I have checked in the .c files
@@ -13,6 +17,8 @@ to build:
 
 This should spit out an executable (./engine) and several .so files
 into the root directory of this repository
+
+**** QUICKSTART *****
 
 then:
 ./engine
@@ -46,7 +52,63 @@ engine.string_string2_freq(300.0)
 engine.string_string3_freq(250.0)
 engine.string_string1_gate(1.0);engine.string_string2_gate(1.0); engine.string_string3_gate(1.0);
 
-TODO:
+******* TODO *******
 
 * Write a makefile
-* Clean up the concepts of 'param' and 'command' (requires work also on norns' matron side)
+
+* Clean up the concepts of 'param' and 'command' (conceptual wrangling
+  with norns devs?)
+* 'params' should mutate state variables, whereas 'command' should
+  execute a function in realtime context
+* currently everything is expressed as a 'command' at OSC level and as
+  a 'param' at DSP level
+* this requires the bad hack of 'trigger params' in the glue layer -
+  these are 'params' whose assignment is deferred to realtime context
+  ad-hoc
+
+******* OSC *******
+
+An 'engineHost' (e.g crone/softcut or ./engine) communicates with a
+'controllerHost' (e.g matron or sguenz) exclusively via OSC
+commands. Here is a summary of the commands used:
+
+** Handshake **
+Request:
+con -> eng ("/ready")
+Response:
+eng -> con ("/crone/ready")
+
+** Load an engine **
+Request:
+con->eng ("/engine/load/name" "monophonic_synth_engine")
+Responses:
+same as 'report commands' (see immediately below)
+
+** report commands **
+Request:
+con->eng ("/report/commands")
+Responses:
+eng->con ("/report/commands/start" 2) -- engineHost has two commands
+eng->con ("/report/commands/entry" 0 "noteon" "ff") -- /command/noteon is a command taking two float args - volume of new note and it's frequency
+eng->con ("/report/commands/entry" 1 "noteoff") -- /command/noteoff has no args - there's only one voice
+eng->con ("report/commands/end") -- done reporting commands
+
+** report params **
+Request:
+con->eng ("/report/params")
+Responses:
+eng->con ("/report/params/start" 0) -- commands are currently not supported by anyone
+eng->con ("/report/params/end")
+
+** report polls **
+Request:
+con->eng ("/report/polls")
+Responses:
+eng->con ("/report/polls/start" 0) -- don't really understand polls - engine doesn't support them
+eng->con ("/report/polls/end")
+
+** make some noise **
+Now handshaking is done, engine is loaded, params are declared. Controller can play a note.
+con->eng ("/command/noteon" 1.0 440) -- full volume note at 440Hz
+(controller waits for a second while note rings out)
+con->eng ("/command/noteoff") -- stop the note
