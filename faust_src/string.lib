@@ -26,9 +26,9 @@ inargs = vgroup("params",res,limit_pos,knee_pos,limit_neg,knee_neg,attack,decay,
   limit_neg = hslider("limit_neg", 0.1, 0.001, 1.0, 0.001);
   knee_neg = hslider("knee_neg", 2, 1, 10.0, 0.1);
   attack = hslider("attack",0.5, 0.1, 10.0, 0.01) * 0.001;
-  decay = hslider("decay",0.5, 0.1, 50.0, 0.01) * 0.001;
-  noise = hslider("noise", 0.1, 0.0, 1.0, 0.0001);
-  sign = hslider("sign", 1.0, -1.0, 1.0, 2.0);
+  decay = hslider("decay",0.2, 0.1, 50.0, 0.01) * 0.001;
+  noise = hslider("noise", 1.0, 0.0, 1.0, 0.0001);
+  sign = hslider("sign", -1.0, -1.0, 1.0, 2.0);
 };
 
 stereo_spread(s1,s2,s3,s4) = (sp.panner(0.2,s1),
@@ -41,7 +41,7 @@ string = hgroup("string", (inargs : hgroup("string1", myString)),
 		(inargs : hgroup("string2", myString)),
 		(inargs : hgroup("string3", myString)),
 		(inargs : hgroup("string4", myString))
-		: par(i,4,*(vslider("vol",0.2,0,10.0,0.01)))
+		: par(i,4,*(vslider("vol",1.0,0,10.0,0.01)))
 		: stereo_spread
 		: par(i,2,(+(0.1) : pseudotanh : -(0.1))));
 

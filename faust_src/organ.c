@@ -295,7 +295,7 @@ void classInitmydsp(int samplingFreq) {
 
 void instanceResetUserInterfacemydsp(mydsp* dsp) {
 	dsp->fVslider0 = (FAUSTFLOAT)0.10000000000000001f;
-	dsp->fVslider1 = (FAUSTFLOAT)1.0f;
+	dsp->fVslider1 = (FAUSTFLOAT)0.5f;
 	dsp->fVslider2 = (FAUSTFLOAT)0.10000000000000001f;
 	dsp->fVslider3 = (FAUSTFLOAT)0.10000000000000001f;
 	dsp->fVslider4 = (FAUSTFLOAT)0.0f;
@@ -867,7 +867,7 @@ void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "freq", &dsp->fVslider21, 100.0f, 10.0f, 2000.0f, 0.100000001f);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "gate", &dsp->fVslider20, 0.0f, 0.0f, 1.0f, 1.0f);
 	ui_interface->closeBox(ui_interface->uiInterface);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider1, 1.0f, 0.0f, 2.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider1, 0.5f, 0.0f, 2.0f, 0.00999999978f);
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "volcolour", &dsp->fVslider0, 0.100000001f, 0.0f, 1.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	

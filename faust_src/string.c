@@ -189,17 +189,17 @@ void classInitmydsp(int samplingFreq) {
 }
 
 void instanceResetUserInterfacemydsp(mydsp* dsp) {
-	dsp->fVslider0 = (FAUSTFLOAT)0.20000000000000001f;
+	dsp->fVslider0 = (FAUSTFLOAT)1.0f;
 	dsp->fVslider1 = (FAUSTFLOAT)440.0f;
 	dsp->fHslider0 = (FAUSTFLOAT)1.0f;
-	dsp->fHslider1 = (FAUSTFLOAT)1.0f;
+	dsp->fHslider1 = (FAUSTFLOAT)-1.0f;
 	dsp->fHslider2 = (FAUSTFLOAT)0.10000000000000001f;
 	dsp->fHslider3 = (FAUSTFLOAT)2.0f;
 	dsp->fHslider4 = (FAUSTFLOAT)0.10000000000000001f;
 	dsp->fHslider5 = (FAUSTFLOAT)2.0f;
-	dsp->fHslider6 = (FAUSTFLOAT)0.10000000000000001f;
+	dsp->fHslider6 = (FAUSTFLOAT)1.0f;
 	dsp->fButton0 = (FAUSTFLOAT)0.0f;
-	dsp->fHslider7 = (FAUSTFLOAT)0.5f;
+	dsp->fHslider7 = (FAUSTFLOAT)0.20000000000000001f;
 	dsp->fHslider8 = (FAUSTFLOAT)0.5f;
 	dsp->fVslider2 = (FAUSTFLOAT)440.0f;
 	dsp->fButton1 = (FAUSTFLOAT)0.0f;
@@ -517,14 +517,14 @@ void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "string");
 	ui_interface->openVerticalBox(ui_interface->uiInterface, "params");
 	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "attack", &dsp->fHslider8, 0.5f, 0.100000001f, 10.0f, 0.00999999978f);
-	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "decay", &dsp->fHslider7, 0.5f, 0.100000001f, 50.0f, 0.00999999978f);
+	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "decay", &dsp->fHslider7, 0.200000003f, 0.100000001f, 50.0f, 0.00999999978f);
 	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "knee_neg", &dsp->fHslider5, 2.0f, 1.0f, 10.0f, 0.100000001f);
 	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "knee_pos", &dsp->fHslider3, 2.0f, 1.0f, 10.0f, 0.100000001f);
 	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "limit_neg", &dsp->fHslider4, 0.100000001f, 0.00100000005f, 1.0f, 0.00100000005f);
 	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "limit_pos", &dsp->fHslider2, 0.100000001f, 0.00100000005f, 1.0f, 0.00100000005f);
-	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "noise", &dsp->fHslider6, 0.100000001f, 0.0f, 1.0f, 9.99999975e-05f);
+	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "noise", &dsp->fHslider6, 1.0f, 0.0f, 1.0f, 9.99999975e-05f);
 	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "res", &dsp->fHslider0, 1.0f, 0.100000001f, 10.0f, 9.99999975e-05f);
-	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "sign", &dsp->fHslider1, 1.0f, -1.0f, 1.0f, 2.0f);
+	ui_interface->addHorizontalSlider(ui_interface->uiInterface, "sign", &dsp->fHslider1, -1.0f, -1.0f, 1.0f, 2.0f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	ui_interface->openHorizontalBox(ui_interface->uiInterface, "string1");
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "freq", &dsp->fVslider1, 440.0f, 50.0f, 1000.0f, 0.00999999978f);
@@ -542,7 +542,7 @@ void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 	ui_interface->addVerticalSlider(ui_interface->uiInterface, "freq", &dsp->fVslider4, 440.0f, 50.0f, 1000.0f, 0.00999999978f);
 	ui_interface->addButton(ui_interface->uiInterface, "gate", &dsp->fButton3);
 	ui_interface->closeBox(ui_interface->uiInterface);
-	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 0.200000003f, 0.0f, 10.0f, 0.00999999978f);
+	ui_interface->addVerticalSlider(ui_interface->uiInterface, "vol", &dsp->fVslider0, 1.0f, 0.0f, 10.0f, 0.00999999978f);
 	ui_interface->closeBox(ui_interface->uiInterface);
 	
 }
