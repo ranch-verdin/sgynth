@@ -49,5 +49,5 @@ rattle = contour * no.noise : fi.lowpass(2,sizzlefreq) : *(sizzle);
 
 
 snarf = hgroup("sd",(shake + rattle)
-		    : *(vslider("vol",0.2,0,2.0,0.01) * 8)
+		    : *(vslider("vol",0.2,0,2.0,0.01) * 4)
 		    : - (0.1) : pseudotanh : +(0.1));

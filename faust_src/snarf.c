@@ -300,7 +300,7 @@ void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 
 void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
 	FAUSTFLOAT* output0 = outputs[0];
-	float fSlow0 = (8.0f * (float)dsp->fVslider0);
+	float fSlow0 = (4.0f * (float)dsp->fVslider0);
 	float fSlow1 = (float)dsp->fVslider1;
 	float fSlow2 = sinf((3.14159274f * min(0.25f, (dsp->fConst1 * fSlow1))));
 	float fSlow3 = (2.0f * fSlow2);
