@@ -9,10 +9,9 @@ import("perc.lib");
 
 attack = 0.1// vslider("attack",1,0.1,10,0.1)
 	 * 0.001;
-decay = vslider("decay",90,2,1500,0.1) * 0.001;
-clapfreq = vslider("clapfreq",3000,1000,3000,10);
-clapq = 0.569// vslider("clapq",0.98,0.5,5.0,0.001)
-;
+decay = vslider("decay",300,2,1500,0.1) * 0.001;
+clapfreq = vslider("clapfreq",1500,1000,3000,10);
+clapq = vslider("clapq",1.3,0.5,5.0,0.001);
 length = 1// vslider("length",6.4,0.1,10,0.1)
 	 * 0.001;
 
@@ -23,8 +22,8 @@ cp = button("cp") : trigger(length) <: _,de.delay(SR,1 * SR / 1000 * clackdel ),
 
 clapenv = en.are(attack,decay,cp);
 
-clapnoise = no.noise : svf(clapfreq, clapq, basic_hard_clip) : !, _, ! ;
+clapnoise = no.noise : svf(clapfreq, clapq, (+(0.2):ma.tanh:-(0.2))) : !, _, ! ;
 
 clack = hgroup("cp", clapnoise * clapenv
-		     : *(vslider("vol",0.2,0,5.0,0.01))
+		     : *(vslider("vol",1.5,0,5.0,0.01))
 		     : tanh);
