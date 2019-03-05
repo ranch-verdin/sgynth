@@ -234,7 +234,7 @@ int main (int argc, char *argv[]) {
   if (jack_connect (client, jack_port_name (output_ports[0]), "system:playback_1")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
-  if (jack_connect (client, jack_port_name (output_ports[0]), "system:playback_2")) {
+  if (jack_connect (client, jack_port_name (output_ports[1]), "system:playback_2")) {
     fprintf (stderr, "cannot connect output ports\n");
   }
 

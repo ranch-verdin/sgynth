@@ -56,6 +56,7 @@ pseudotanh_aux(x) = select2(x > 1,
 			    1);
 
 pseudotanh(x) = pseudotanh_aux(x * 2/3);
+half_tanh(x) = 0.5 * (ma.tanh(x) + x);
 
 knee_fade(f1,f2,kink,knee,in) =
   select2(x > kink + knee/2,

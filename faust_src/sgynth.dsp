@@ -34,9 +34,9 @@ panrev(pan,rev,sig) = panned,(panned : *(rev),*(rev)) with {
   panned = sp.panner(pan,sig);
 };
 
-rev_karplus(rev,panned) = panned,(panned : (*(rev) : fi.lowpass(2,6000)),(*(rev) : fi.lowpass(2,6000)));
+rev_karplus(rev,l,r) = l,r,l * rev,r * rev;
 
-instruments = panrev(0.5,bd_rev,bd),panrev(0.1,hh_rev,hh),panrev(0.6,og_rev,og),rev_karplus(tw_rev,tw),panrev(0.4,sd_rev,sd),panrev(0.6,cp_rev,cp),panrev(0.3,wb_rev,wb) :> si.bus(4) with {
+instruments = panrev(0.5,bd_rev,bd),panrev(0.1,hh_rev,hh),panrev(0.6,og_rev,og),rev_karplus(tw_rev,tw_l,tw_r),panrev(0.4,sd_rev,sd),panrev(0.6,cp_rev,cp),panrev(0.3,wb_rev,wb) :> si.bus(4) with {
   bd = drumbum.drumbum;
   bd_rev = 0.1// vslider("bd_rev",0.1,0.0,1.0,0.01)
   ;
@@ -49,6 +49,8 @@ instruments = panrev(0.5,bd_rev,bd),panrev(0.1,hh_rev,hh),panrev(0.6,og_rev,og),
   tw = string.string;
   tw_rev = 0.5// vslider("tw_rev",0.1,0.0,1.0,0.01)
   ;
+  tw_l = tw : _,!;
+  tw_r = tw : !,_;
   sd = snarf.snarf;
   sd_rev = 0.8// vslider("sd_rev",0.1,0.0,1.0,0.01)
   ;

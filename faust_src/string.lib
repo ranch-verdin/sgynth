@@ -7,42 +7,39 @@ import("svf.lib");
 nl_lagrangecombfilter(maxdel,del,g,nl_element) = (+ : de.fdelayltv(5,maxdel,del) ) ~ (nl_element : fi.dcblockerat(1) : *(g));
 
 // myString(freq,res,gate) = excitation : fi.fb_fcomb(maxDel,N,b0,aN)
-myString(res,limit_pos,knee_pos,limit_neg,knee_neg,sharpness,expos,strength,sign) = excitation : nl_lagrangecombfilter(maxDel,N,aN,nl_element)
+myString(res,sharpness,expos,strength,sign) = excitation : nl_lagrangecombfilter(maxDel,N,aN,nl_element)
 with{
   freq = vslider("freq",440,50,1000,0.01) // : fi.lowpass(1, 10.0)
   ;
   gate = button("gate");
   // nl_element=sign * asym_soft_clipper_tanc(limit_pos,knee_pos,limit_neg,knee_neg);
-  nl_element = +(0.1) : ma.tanh : -(0.1) : *(sign);
+  nl_element = +(0.1) : half_tanh : -(0.1) : *(sign);
   maxDel = 8192;
   N = ma.SR/freq;
   b0 = 1;
   aN = ba.tau2pole(res * freq * 0.0001);
-  excitation =  pm.strike(expos,sharpness,strength,gate)*(100 / freq);
+  excitation =  pm.strike(expos,sharpness,strength,gate);
 };
 
-inargs = vgroup("params",res,limit_pos,knee_pos,limit_neg,knee_neg,sharpness,expos,strength,sign) with {
-  res = hslider("res", 1.0, 0.01, 1.0, 0.0001);
-  limit_pos = hslider("limit_pos", 1.0, 0.001, 1.0, 0.001);
-  knee_pos = hslider("knee_pos", 1.5, 1, 10.0, 0.1);
-  limit_neg = hslider("limit_neg", 1.0, 0.001, 1.0, 0.001);
-  knee_neg = hslider("knee_neg", 1.5, 1, 10.0, 0.1);
-  sharpness = hslider("sharpness",1.0, 0.1, 1.0, 0.01);
+inargs = vgroup("params",res,sharpness,expos,strength,sign) with {
+  res = hslider("res", 1.0, 0.01, 2.0, 0.0001);
+  sharpness = 1// hslider("sharpness",1.0, 0.1, 1.0, 0.01)
+  ;
   expos = hslider("expos",0.5, 0.0, 1.0, 0.01);
   sign = hslider("sign", -1.0, -1.0, 1.0, 2.0);
   strength = hslider("strength", 2.0, 0.0, 5.0, 0.1);
 };
 
-stereo_spread(s1,s2,s3,s4) = (sp.panner(0.2,s1),
-			      sp.panner(0.4,s2),
-			      sp.panner(0.6,s3),
+stereo_spread(s1,s2,s3,s4) = (sp.panner(0.4,s1),
+			      sp.panner(0.6,s2),
+			      sp.panner(0.7,s3),
 			      sp.panner(0.8,s4)) :> (_,_) ;
 										   
 
-string = hgroup("string", (inargs : hgroup("string1", myString)),
-		(inargs : hgroup("string2", myString)),
+string = hgroup("string", (inargs : hgroup("string4", myString)),
 		(inargs : hgroup("string3", myString)),
-		(inargs : hgroup("string4", myString))
+		(inargs : hgroup("string2", myString)),
+		(inargs : hgroup("string1", myString))
 		: par(i,4,*(vslider("vol",0.7,0,10.0,0.01)))
 		: stereo_spread
 		: par(i,2,(+(0.1) : pseudotanh : -(0.1))));
