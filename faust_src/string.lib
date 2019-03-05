@@ -4,7 +4,7 @@ import("svf.lib");
 
 // off = hslider("off", 0.00, 0.0, 1.0, 0.0001);
 
-nl_lagrangecombfilter(maxdel,del,g,nl_element) = (+ : de.fdelayltv(5,maxdel,del) ) ~ (nl_element : fi.dcblockerat(1) : *(g));
+nl_lagrangecombfilter(maxdel,del,g,nl_element) = (+ : de.fdelayltv(5,maxdel,del) ) ~ (nl_element : fi.dcblockerat(5) : *(g));
 
 // myString(freq,res,gate) = excitation : fi.fb_fcomb(maxDel,N,b0,aN)
 myString(res,sharpness,expos,strength,sign) = excitation : nl_lagrangecombfilter(maxDel,N,aN,nl_element)
@@ -42,5 +42,5 @@ string = hgroup("string", (inargs : hgroup("string4", myString)),
 		(inargs : hgroup("string1", myString))
 		: par(i,4,*(vslider("vol",0.7,0,10.0,0.01)))
 		: stereo_spread
-		: par(i,2,(+(0.1) : pseudotanh : -(0.1))));
+		: par(i,2,(+(0.1) : pseudotanh : -(0.1) : fi.dcblockerat(5))));
 
