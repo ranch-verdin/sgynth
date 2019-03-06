@@ -17,7 +17,7 @@ with{
   maxDel = 8192;
   N = ma.SR/freq;
   b0 = 1;
-  aN = ba.tau2pole(res * freq * 0.0001);
+  aN = ba.tau2pole(res * (freq * 0.0001) * (freq * 0.001));
   excitation =  pm.strike(expos,sharpness,strength,gate);
 };
 

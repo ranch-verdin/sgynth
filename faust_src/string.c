@@ -423,7 +423,7 @@ void instanceConstantsmydsp(mydsp* dsp, int samplingFreq) {
 	dsp->fConst0 = min(192000.0f, max(1.0f, (float)dsp->fSamplingFreq));
 	dsp->fConst1 = (15.707963f / dsp->fConst0);
 	dsp->fConst2 = (1.0f / (dsp->fConst1 + 1.0f));
-	dsp->fConst3 = (10000.0f / dsp->fConst0);
+	dsp->fConst3 = (10000000.0f / dsp->fConst0);
 	dsp->fConst4 = (3.14159274f / dsp->fConst0);
 	dsp->fConst5 = (0.00400000019f * dsp->fConst0);
 	dsp->fConst6 = (0.00200000009f * dsp->fConst0);
@@ -488,7 +488,7 @@ void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outpu
 	float fSlow10 = (((((0.0f - fSlow5) * (0.0f - (0.5f * fSlow6))) * (0.0f - (0.333333343f * fSlow7))) * (0.0f - (0.25f * fSlow8))) * (0.0f - (0.200000003f * fSlow9)));
 	float fSlow11 = (float)dsp->fHslider0;
 	float fSlow12 = (float)dsp->fHslider1;
-	float fSlow13 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * fSlow1)))) * fSlow12);
+	float fSlow13 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * mydsp_faustpower2_f(fSlow1))))) * fSlow12);
 	float fSlow14 = (float)dsp->fHslider3;
 	float fSlow15 = tanf((dsp->fConst4 * ((15000.0f * fSlow14) + 500.0f)));
 	float fSlow16 = (1.0f / fSlow15);
@@ -530,7 +530,7 @@ void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outpu
 	float fSlow52 = (fSlow46 + (-4.0f - fSlow48));
 	float fSlow53 = (fSlow46 + (-5.0f - fSlow48));
 	float fSlow54 = (((((0.0f - fSlow49) * (0.0f - (0.5f * fSlow50))) * (0.0f - (0.333333343f * fSlow51))) * (0.0f - (0.25f * fSlow52))) * (0.0f - (0.200000003f * fSlow53)));
-	float fSlow55 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * fSlow45)))) * fSlow12);
+	float fSlow55 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * mydsp_faustpower2_f(fSlow45))))) * fSlow12);
 	float fSlow56 = (float)dsp->fButton1;
 	int iSlow57 = (int)fSlow47;
 	int iSlow58 = min(8192, max(0, iSlow57));
@@ -557,7 +557,7 @@ void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outpu
 	float fSlow79 = (fSlow73 + (-4.0f - fSlow75));
 	float fSlow80 = (fSlow73 + (-5.0f - fSlow75));
 	float fSlow81 = (((((0.0f - fSlow76) * (0.0f - (0.5f * fSlow77))) * (0.0f - (0.333333343f * fSlow78))) * (0.0f - (0.25f * fSlow79))) * (0.0f - (0.200000003f * fSlow80)));
-	float fSlow82 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * fSlow72)))) * fSlow12);
+	float fSlow82 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * mydsp_faustpower2_f(fSlow72))))) * fSlow12);
 	float fSlow83 = (float)dsp->fButton2;
 	int iSlow84 = (int)fSlow74;
 	int iSlow85 = min(8192, max(0, iSlow84));
@@ -584,7 +584,7 @@ void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outpu
 	float fSlow106 = (fSlow100 + (-4.0f - fSlow102));
 	float fSlow107 = (fSlow100 + (-5.0f - fSlow102));
 	float fSlow108 = (((((0.0f - fSlow103) * (0.0f - (0.5f * fSlow104))) * (0.0f - (0.333333343f * fSlow105))) * (0.0f - (0.25f * fSlow106))) * (0.0f - (0.200000003f * fSlow107)));
-	float fSlow109 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * fSlow99)))) * fSlow12);
+	float fSlow109 = (expf((0.0f - (dsp->fConst3 / (fSlow11 * mydsp_faustpower2_f(fSlow99))))) * fSlow12);
 	float fSlow110 = (float)dsp->fButton3;
 	int iSlow111 = (int)fSlow101;
 	int iSlow112 = min(8192, max(0, iSlow111));
