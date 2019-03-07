@@ -6,6 +6,13 @@ import("svf.lib");
 
 nl_lagrangecombfilter(maxdel,del,g,nl_element) = (+ : de.fdelayltv(5,maxdel,del) ) ~ (nl_element  : *(g));
 
+stringcomp = co.compressor_mono(vslider("ratio",3.0,1.0,10.0,0.01),
+				vslider("threshold",-9,-40.0,0.0,0.01),
+				vslider("attack",10,0.0,50.0,0.01) * 0.001,
+				vslider("release",50,0.0,500.0,0.01) * 0.001);
+
+rectify(x) = an.amp_follower_ar(0.015,0.075,(x:@(1000))) * 0.5// hslider("rect", 0.1, 0.0, 1.0, 0.01)
+;
 // myString(freq,res,gate) = excitation : fi.fb_fcomb(maxDel,N,b0,aN)
 myString(res,sharpness,expos,strength,sign) = excitation : nl_lagrangecombfilter(maxDel,N,aN,nl_element)
 with{
@@ -13,7 +20,9 @@ with{
   ;
   gate = button("gate");
   // nl_element=sign * asym_soft_clipper_tanc(limit_pos,knee_pos,limit_neg,knee_neg);
-  nl_element = +(0.1) : half_tanh : -(0.1) : *(sign);
+  offset = 0.1// hslider("offset", 0.1, 0.0, 0.2, 0.01)
+  ;
+  nl_element(x) = x : +(offset) : half_tanh : -(offset) : *(sign) : fi.lowpass(2,15000) : fi.bandstop(1,2000,2200 * (1 + rectify(x) ));
   maxDel = 8192;
   N = ma.SR/freq;
   b0 = 1;
@@ -26,7 +35,7 @@ inargs = vgroup("params",res,sharpness,expos,strength,sign) with {
   sharpness = 1// hslider("sharpness",1.0, 0.1, 1.0, 0.01)
   ;
   expos = hslider("expos",0.5, 0.0, 1.0, 0.01);
-  sign = hslider("sign", -1.0, -1.0, 1.0, 2.0);
+  sign = hslider("sign", 1.0, -1.0, 1.0, 2.0);
   strength = hslider("strength", 2.0, 0.0, 5.0, 0.1);
 };
 
