@@ -1,6 +1,7 @@
 #include "engine.h"
 #include <stdlib.h>
 #include <math.h>
+#include <sys/mman.h>
 
 struct example {
   struct engineUI_t *ui;
@@ -13,6 +14,7 @@ struct example {
 
 void *engine_new(struct engineUI_t *ui, int samplingFreq) {
   struct example *engine = malloc(sizeof(struct example));
+  mlock(engine, sizeof(struct example));
   engine->ui = ui;
   engine->env = 0.5;
   ui->sampleRate = samplingFreq;
@@ -22,6 +24,7 @@ void *engine_new(struct engineUI_t *ui, int samplingFreq) {
 }
 
 void engine_free(void *engine) {
+  munlock(engine, sizeof(struct example));
   free(engine);
 }
 
