@@ -1,3 +1,3 @@
 import("wub.lib");
 
-process = wub;
+process = wub <: _,_;

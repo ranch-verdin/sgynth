@@ -1,4 +1,4 @@
 import("hatz.lib");
 
 
-process = hatz;
+process = hatz <: _,_;

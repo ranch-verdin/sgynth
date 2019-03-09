@@ -1,3 +1,3 @@
 import("organ.lib");
 
-process = organ;
+process = organ <: _,_;

@@ -1,3 +1,3 @@
 import("drumbum.lib");
 
-process = drumbum;
+process = drumbum <: _,_;

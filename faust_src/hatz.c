@@ -191,7 +191,7 @@ int getNumInputsmydsp(mydsp* dsp) {
 	
 }
 int getNumOutputsmydsp(mydsp* dsp) {
-	return 1;
+	return 2;
 	
 }
 int getInputRatemydsp(mydsp* dsp, int channel) {
@@ -210,6 +210,10 @@ int getOutputRatemydsp(mydsp* dsp, int channel) {
 	int rate;
 	switch (channel) {
 		case 0: {
+			rate = 1;
+			break;
+		}
+		case 1: {
 			rate = 1;
 			break;
 		}
@@ -677,6 +681,7 @@ void buildUserInterfacemydsp(mydsp* dsp, UIGlue* ui_interface) {
 
 void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
 	FAUSTFLOAT* output0 = outputs[0];
+	FAUSTFLOAT* output1 = outputs[1];
 	float fSlow0 = (float)dsp->fButton0;
 	float fSlow1 = (float)dsp->fButton1;
 	float fSlow2 = (0.00100000005f * (float)dsp->fVslider0);
@@ -773,7 +778,9 @@ void computemydsp(mydsp* dsp, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outpu
 			float fRec7 = fTemp40;
 			dsp->fRec4[0] = (fRec7 - (dsp->fConst51 * ((dsp->fConst52 * dsp->fRec4[2]) + (dsp->fConst53 * dsp->fRec4[1]))));
 			dsp->iRec18[0] = ((1103515245 * dsp->iRec18[1]) + 12345);
-			output0[i] = (FAUSTFLOAT)((dsp->fRec0[0] * ((dsp->fConst6 * (dsp->fRec4[2] + (dsp->fRec4[0] + (2.0f * dsp->fRec4[1])))) + (9.31322554e-12f * (float)dsp->iRec18[0]))) * fSlow7);
+			float fTemp43 = ((dsp->fRec0[0] * ((dsp->fConst6 * (dsp->fRec4[2] + (dsp->fRec4[0] + (2.0f * dsp->fRec4[1])))) + (9.31322554e-12f * (float)dsp->iRec18[0]))) * fSlow7);
+			output0[i] = (FAUSTFLOAT)fTemp43;
+			output1[i] = (FAUSTFLOAT)fTemp43;
 			dsp->iVec0[1] = dsp->iVec0[0];
 			dsp->fVec1[1] = dsp->fVec1[0];
 			dsp->fRec1[1] = dsp->fRec1[0];

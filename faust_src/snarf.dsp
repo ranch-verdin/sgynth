@@ -1,3 +1,3 @@
 import("snarf.lib");
 
-process = snarf;
+process = snarf <: _,_;

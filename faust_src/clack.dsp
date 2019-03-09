@@ -1,3 +1,3 @@
 import("clack.lib");
 
-process = clack;
+process = clack <: _,_;
