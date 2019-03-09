@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <error.h>
 #include "lo/lo.h"
+#include <stdatomic.h>
 
 static int default_engineParamHandler(const char *path, const char *types, lo_arg ** argv,
 				      int argc, void *data, void *user_data) {
@@ -57,6 +58,7 @@ static int default_engineTriggerHandler(const char *path, const char *types, lo_
   /* printf("handling trig: %s,%f\n", path, argv[0]->f); */
   struct engineCommand_t *command = user_data;
   command->newval = argv[0]->f;
+  atomic_thread_fence(memory_order_release);
   command->update_flag = 1;
   return 1;
 }
@@ -186,6 +188,7 @@ int generic_handler(const char *path, const char *types, lo_arg ** argv,
 int engine_load_handler(const char *path, const char *types, lo_arg ** argv,
 			int argc, void *data, void *user_data) {
   strncpy(engine_reload_string, &argv[0]->s, ENGINE_MAX_NAMESTRING - 1);
+  atomic_thread_fence(memory_order_release);
   engine_reload_flag = 1;
   return 0;
 }

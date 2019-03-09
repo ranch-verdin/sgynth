@@ -5,6 +5,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <error.h>
+#include <stdatomic.h>
 
 #include <jack/jack.h>
 #include <math.h>
@@ -44,6 +45,7 @@ int process_block (jack_nframes_t nframes, void *arg) {
   if(fb_flag) {
     myengine = fb_myengine;
     myengine_next = fb_myengine_next;
+    atomic_thread_fence(memory_order_release);
     fb_flag = 0;
   }
   //First get an input buffer for each jack input
@@ -59,12 +61,14 @@ int process_block (jack_nframes_t nframes, void *arg) {
     for(j=0; j < ui.numCommands; j++) {
       update_flags[j] = ui.commands[j].update_flag;
       if (update_flags[j]) {
+	atomic_thread_fence(memory_order_acquire);
 	*(ui.commands[j].param.param) = ui.commands[j].newval;
       }
     }
     (*myengine_next)(myengine, nframes, jack_in, jack_out);
     for(j=0; j < ui.numCommands; j++) {
       if (update_flags[j]) {
+	atomic_thread_fence(memory_order_release);
 	ui.commands[j].update_flag = 0;
       }
     }
@@ -83,6 +87,7 @@ void load_so (char *so_file) {
     void *cache_myengine_pointer = myengine;
     fb_myengine = NULL;
     fb_myengine_next = NULL;
+    atomic_thread_fence(memory_order_release);
     fb_flag = 1;
     int i = 0;
     while(fb_flag) {
@@ -91,6 +96,7 @@ void load_so (char *so_file) {
 	error(1,0,"realtime thread failed to detach old DSP code, can't recover!");
       }
     }
+    atomic_thread_fence(memory_order_acquire);
     myengine_free = dlsym(handle, "engine_free");
     if (myengine_free) {
       if(cache_myengine_pointer) {
@@ -134,6 +140,7 @@ void load_so (char *so_file) {
 
   default_engineResetUI(&ui);
   (*myengine_buildUI)(fb_myengine, &ui);
+  atomic_thread_fence(memory_order_release);
   fb_flag = 1;
 }
 
@@ -244,6 +251,7 @@ int main (int argc, char *argv[]) {
       lo_server_recv(ui.st);
     }
     if (engine_reload_flag) {
+      atomic_thread_fence(memory_order_acquire);
       default_engineResetUI(&ui);
       load_so(engine_reload_string);
       report_commands_handler("", "f", NULL, 0, NULL, &ui);
