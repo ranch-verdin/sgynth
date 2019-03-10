@@ -14,9 +14,8 @@ organ_aux(freq,gate,vibrato,attack,release,colour,drive,a1,a2,a3,a4,a5,a6,a8) =
 };
 
 organ = hgroup("organ",
-	       par(i,2,vibrato,attack,release,colour,drive,a1,a2,a3,a4,a5,a6,a8):
-	       (hgroup("voice1",organ_aux(freq, gate)),hgroup("voice2",organ_aux(freq, gate))// ,hgroup("voice3",organ_aux(freq, gate)),hgroup("voice4",organ_aux(freq, gate))
-	       ) :>
+	       par(i,4,vibrato,attack,release,colour,drive,a1,a2,a3,a4,a5,a6,a8):
+	       (hgroup("voice1",organ_aux(freq, gate)),hgroup("voice2",organ_aux(freq, gate)),hgroup("voice3",organ_aux(freq, gate)),hgroup("voice4",organ_aux(freq, gate)) ) :>
 	       *(vslider("vol", 0.5, 0.0,2.0,0.01)) :
 	       fi.lowpass(2,10000) : -(main_colour) : tanh : +(main_colour)) with {
   freq = vslider("freq", 100.0, 10.0, 2000.0, 0.1);
