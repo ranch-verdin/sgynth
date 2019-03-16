@@ -21,6 +21,13 @@ static struct engineUI_t ui;
 static jack_port_t *input_ports[IN_PORTS];
 static jack_port_t *output_ports[OUT_PORTS];
 
+int
+jack_xrun_callback(void *arg)
+{
+   fprintf (stderr, "Xrun at DSP load %f\n" , jack_cpu_load(client));
+   return 0;
+}
+
 /**
  * The process callback for this JACK application is called in a
  * special realtime thread once for each audio cycle.
@@ -35,7 +42,8 @@ void *myengine = NULL;
 void (*fb_myengine_next)(void* engine, int count, ENGINEFLOAT** inputs, ENGINEFLOAT** outputs) = NULL;
 void *fb_myengine = NULL;
 volatile int fb_flag = 0;
-
+jack_time_t last_stat_print;
+jack_nframes_t jack_max_frame_length;
 
 int process_block (jack_nframes_t nframes, void *arg) {
 
@@ -72,6 +80,10 @@ int process_block (jack_nframes_t nframes, void *arg) {
 	ui.commands[j].update_flag = 0;
       }
     }
+  }
+  jack_nframes_t frames_this_time = jack_frames_since_cycle_start(client);
+  if(frames_this_time > jack_max_frame_length) {
+    jack_max_frame_length = frames_this_time;
   }
   return 0;
 }
@@ -176,6 +188,7 @@ int main (int argc, char *argv[]) {
   }
 
   jack_set_process_callback (client, process_block, 0);
+  jack_set_xrun_callback(client, jack_xrun_callback, 0);
   jack_on_shutdown (client, jack_shutdown, 0);
 
   /* display the current sample rate.
@@ -246,6 +259,7 @@ int main (int argc, char *argv[]) {
   }
 
   lo_send(ui.matron_addr, "/crone/ready","");
+  last_stat_print = jack_get_time();
   while(1) {
     if(ui.st) {
       lo_server_recv(ui.st);
@@ -259,6 +273,13 @@ int main (int argc, char *argv[]) {
       engine_reload_flag = 0;
       // FIXME - build report_polls_handler and uncomment the line below
       /* report_polls_handler("", "f", NULL, 0, NULL, NULL); */
+    }
+    jack_time_t this_stat_print = jack_get_time();
+    /* printf("this_stat_print = %d\n", this_stat_print); */
+    if(this_stat_print - last_stat_print >= 5000000) {
+      printf("max frame length: %d, cpu load: %f\n", jack_max_frame_length, jack_cpu_load(client));
+      last_stat_print = this_stat_print;
+      jack_max_frame_length = 0;
     }
   }
   /* this is never reached but if the program
