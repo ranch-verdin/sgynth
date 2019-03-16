@@ -14,6 +14,7 @@ for faustfile in `ls faust_src/*.dsp | sed -e s/.dsp//g`; do
 	# faust -lang c  -vec -vs 256
 	faust -lang c $faustfile.dsp >> $faustfile.c
 	fi
+    echo building $faustfile
     gcc -I include -O3 -Wall -c -fPIC $faustfile.c -o $faustfile.o
     gcc -I include c_src/engine_faustExample.o c_src/faustglue.o $faustfile.o -shared -o $faustfile.so
     mv $faustfile.so ./
