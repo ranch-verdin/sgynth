@@ -3,6 +3,8 @@ rm `find . -name "*.o"` `find . -name "*.so"` engine &>/dev/null
 gcc -I include -O3 -Wall -c -fPIC -lmath c_src/engine_faustExample.c -o c_src/engine_faustExample.o
 gcc -I include -O3 -Wall -c -fPIC c_src/faustglue.c -llo -ljack -ldl -o c_src/faustglue.o
 
+FAUST_GCC_OPTS="-O2 -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -funsafe-math-optimizations -ffast-math"
+
 faust --help &>/dev/null
 have_faust=$?
 for faustfile in `ls faust_src/*.dsp | sed -e s/.dsp//g`; do
@@ -15,7 +17,7 @@ for faustfile in `ls faust_src/*.dsp | sed -e s/.dsp//g`; do
 	faust -lang c $faustfile.dsp >> $faustfile.c
 	fi
     echo building $faustfile
-    gcc -I include -O3 -Wall -c -fPIC $faustfile.c -o $faustfile.o
+    gcc -I include $FAUST_GCC_OPTS -Wall -c -fPIC $faustfile.c -o $faustfile.o
     gcc -I include c_src/engine_faustExample.o c_src/faustglue.o $faustfile.o -shared -o $faustfile.so
     mv $faustfile.so ./
 done
