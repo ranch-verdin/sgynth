@@ -233,7 +233,7 @@ Engine_Snarf : CroneEngine {
 			~blat.value(strang,\gate_3)
 		});
 		this.addCommand("wb", "ff", {|msg|
-			wub.set(\gate,msg[1])
+			wub.set(\gate,msg[1]);
 			wub.set(\freq, msg[2]);
 		});
 
